@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.11) # ensure we're running on a modern CMake
+cmake_minimum_required(VERSION 3.12) # ensure we're running on a modern CMake
 
 set(CMAKE_TOOLCHAIN_FILE "cmake/gcc_stm32f4.cmake")
 project(firmware
