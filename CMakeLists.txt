@@ -6,6 +6,7 @@ project(firmware
 set(CMAKE_CXX_STANDARD 17) # use the C++17 standard
 
 add_executable(fcu src/fcu.cpp)
+enable_language(ASM)
 
 #######################################################################################
 ### make sure Git submodules have been checked out, and check them out if they aren't
