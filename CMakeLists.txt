@@ -1,4 +1,6 @@
-cmake_minimum_required(VERSION 3.12) # ensure we're running on a modern CMake
+cmake_minimum_required(VERSION 3.12) # ensure we're running on a modern CMake.
+                                     # sorry, Ubuntu and/or Debian users! to get a recent version of CMake,
+                                     # add the Kitware apt repository via the instructions at https://apt.kitware.com/
 
 set(CMAKE_TOOLCHAIN_FILE "cmake/gcc_stm32f4.cmake")
 
