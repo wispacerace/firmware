@@ -50,7 +50,7 @@ find_package(ChibiOS) # this invokes cmake/FindChibiOS.cmake
 ###     - ChibiOS::RT → the actual ChibiOS kernel
 ###     - ChibiOS::Board::NucleoF413ZH → support code for the devboard we're using
 ###     - ChibiOS::HAL → the ChibiOS hardware abstraction layer
-###     - ChibiOS::CPPWrappers → C++ wrappers and runtime startup code
+###     - ChibiOS::CPPWrappers → C++ wrappers and runtime builtins
 target_link_libraries(fcu ChibiOS::RT ChibiOS::Board::NucleoF413ZH ChibiOS::HAL ChibiOS::CPPWrappers)
 
 ### ► enable link-time optimization on the Flight Control Unit target

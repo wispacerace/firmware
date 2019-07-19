@@ -1,9 +1,14 @@
 GET_FILENAME_COMPONENT(FIRMWARE_CMAKE_DIR ${CMAKE_CURRENT_LIST_FILE} DIRECTORY)
 SET(CMAKE_MODULE_PATH ${FIRMWARE_CMAKE_DIR} ${CMAKE_MODULE_PATH})
 
-# include common gcc stm32 toolchain file
+### ► include common gcc stm32 toolchain file
 include(gcc_stm32)
 
+### ► common flags for C and C++ compilers and the assembler
+# -mthumb → emit Thumb instructions
+# -mcpu=cortex-m4 → target compiler backend specifically to the cortex-m4
+# -mfloat-abi=hard → all floating point operations will become FPU instructions
+# -mfpu=fpv4-sp-d16 → specify available floating-point hardware on the STM32F4
 set(COMMON_FLAGS "-mthumb \
                   -mcpu=cortex-m4 \
                   -mfloat-abi=hard \

@@ -68,10 +68,10 @@ target_include_directories(ChibiOS::RT INTERFACE
         ${ChibiOS_INCLUDES_PORT_ARMv7M}
         ${ChibiOS_INCLUDES_PORT_STM32F4}
         )
-# TODO: hardcoded cortex usefpu since our toolchain file sets hardfp
+# ⚠ TODO: hardcoded cortex usefpu since our toolchain file sets hardfp
 target_compile_definitions(ChibiOS::RT INTERFACE CORTEX_USE_FPU)
 
-# inject modules
+#### ► for each enabled ChibiOS/RT module, add its source file to the ChibiOS::RT target
 foreach(module ${ChibiOS_KERN_FEATURES})
     target_sources(ChibiOS::RT INTERFACE ${ChibiOS_SOURCES_RT_MOD_${module}})
 endforeach()

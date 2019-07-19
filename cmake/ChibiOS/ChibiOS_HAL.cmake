@@ -101,7 +101,7 @@ set(ChibiOS_SOURCES_HAL_LLD_F4_PAL
 set(ChibiOS_INCLUDES_HAL_LLD_F4_PAL
         ${ChibiOS_ROOT}/os/hal/ports/STM32/LLD/GPIOv2)
 
-## WARNING/TODO: This DOES NOT respect USE_HAL_I2C_FALLBACK and defaults to the Real Peripheral!
+## ⚠ TODO: This DOES NOT respect USE_HAL_I2C_FALLBACK and defaults to the Real Peripheral!
 # This is what you want 99.9% of the time, but if anyone outside WISR ever misguidedly uses this
 # set of CMake modules, heads up!
 set(ChibiOS_SOURCES_HAL_LLD_F4_I2C
@@ -163,8 +163,6 @@ set(ChibiOS_SOURCES_HAL_LLD_F4_WDG
         ${ChibiOS_ROOT}/os/hal/ports/STM32/LLD/xWDGv1/hal_wdg_lld.c)
 set(ChibiOS_INCLUDES_HAL_LLD_F4_WDG
         ${ChibiOS_ROOT}/os/hal/ports/STM32/LLD/xWDGv1)
-
-
 ### LOW LEVEL DRIVERS END   ###
 
 
@@ -180,12 +178,12 @@ target_include_directories(ChibiOS::HAL INTERFACE
         ${ChibiOS_INCLUDES_HAL_F4}
         )
 
-# inject subsystems
+### ► for each enabled subsystem, inject its high-level source files into the HAL target 
 foreach(subsystem ${ChibiOS_HAL_FEATURES})
     target_sources(ChibiOS::HAL INTERFACE ${ChibiOS_SOURCES_HAL_SUBSYS_${subsystem}})
 endforeach()
 
-# inject llds
+### ► for each enabled subsystem, inject its low-level driver sources into the HAL target, and add the low-level driver as an include directory for the target. 
 foreach(subsystem ${ChibiOS_HAL_FEATURES})
     target_sources(ChibiOS::HAL INTERFACE
             ${ChibiOS_SOURCES_HAL_LLD_F4_${subsystem}})
