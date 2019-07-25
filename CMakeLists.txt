@@ -38,6 +38,7 @@ check_ipo_supported(RESULT is_ipo_supported)
 
 ### ► add the Flight Control Unit firmware as an executable target
 add_executable(fcu src/fcu.cpp)
+set_target_properties(fcu PROPERTIES SUFFIX ".elf")
 target_include_directories(fcu PRIVATE src/cfg)
 
 ### ► set variables pointing to ChibiOS tree and our configuration files for it, and then "find" it (load the targets that we can build it with).
