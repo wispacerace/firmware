@@ -87,3 +87,8 @@ target_compile_options(fcu PUBLIC
     $<$<COMPILE_LANGUAGE:CXX>:-fno-rtti> # if the source file under consideration is C++, add the -fno-rtti flag.
                                          # this disables RTTI, which is basically runtime type information
     )
+
+### ► flash target for fcu
+add_custom_target(flash-fcu
+    DEPENDS fcu
+    COMMAND openocd --file ${PROJECT_SOURCE_DIR}/dbg-scripts/flash-fcu.cfg)
