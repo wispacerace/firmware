@@ -62,7 +62,7 @@ endif()
 ### ► generate board target and make the FCU target link to it
 add_library(brd_fcudev INTERFACE)
 add_custom_command(OUTPUT ${PROJECT_BINARY_DIR}/boards/fcudev/board.h
-    COMMAND python ${PROJECT_SOURCE_DIR}/tools/gen-board.h/gen-board-header ${PROJECT_SOURCE_DIR}/src/boards/fcudev/board.yml ${PROJECT_BINARY_DIR}/boards/fcudev/board.h
+    COMMAND python3 ${PROJECT_SOURCE_DIR}/tools/gen-board.h/gen-board-header ${PROJECT_SOURCE_DIR}/src/boards/fcudev/board.yml ${PROJECT_BINARY_DIR}/boards/fcudev/board.h
     DEPENDS ${PROJECT_SOURCE_DIR}/src/boards/fcudev/board.yml)
 target_sources(brd_fcudev INTERFACE
     ${PROJECT_SOURCE_DIR}/src/boards/fcudev/board.c
