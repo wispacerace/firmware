@@ -1,0 +1,22 @@
+name: fcudev
+lsefreq: 0
+voltage: 3.3
+hsefreq: 8000000
+mcutype: STM32F413xx
+other:
+  STM32_HSE_BYPASS: ~
+default: input, pushpull, starthigh, pullup, highspeed
+pins:
+  SPI1_SCK: pa5, af5
+  SPI1_MISO: pa6, af5
+  SPI1_MOSI: pa7, af5
+  SPI1_MOSI: pa7, af5
+  SPI1_CS: pf13, output, pushpull
+
+  LED1: pb0,  output, pushpull, startlow
+  LED2: pb7,  output, pushpull, startlow
+  LED3: pb14, output, pushpull, startlow
+
+  # fix SWD
+  SWCK: pa14, af0, floating
+  SWDIO: pa13, af0, floating

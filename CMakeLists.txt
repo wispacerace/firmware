@@ -27,7 +27,8 @@ if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
     endif()
 endif()
 
-if(NOT EXISTS "${PROJECT_SOURCE_DIR}/vendor/ChibiOS/readme.txt")
+if(NOT EXISTS "${PROJECT_SOURCE_DIR}/vendor/ChibiOS/readme.txt"
+    OR NOT EXISTS "${PROJECT_SOURCE_DIR}/tools/gen-board.h/README.md")
     message(FATAL_ERROR "The submodules were not downloaded! GIT_SUBMODULE was turned off or failed. Please update submodules and try again.")
 endif()
 
@@ -49,15 +50,26 @@ find_package(ChibiOS) # this invokes cmake/FindChibiOS.cmake
 
 ### ► configure our Flight Control Unit firmware target to link against ChibiOS modules we need.
 ###     - ChibiOS::RT → the actual ChibiOS kernel
-###     - ChibiOS::Board::NucleoF413ZH → support code for the devboard we're using
 ###     - ChibiOS::HAL → the ChibiOS hardware abstraction layer
 ###     - ChibiOS::CPPWrappers → C++ wrappers and runtime builtins
-target_link_libraries(fcu ChibiOS::RT ChibiOS::Board::NucleoF413ZH ChibiOS::HAL ChibiOS::CPPWrappers)
+target_link_libraries(fcu ChibiOS::RT ChibiOS::HAL ChibiOS::CPPWrappers)
 
 ### ► enable link-time optimization on the Flight Control Unit target
 if(is_ipo_supported)
     set_target_properties(fcu PROPERTIES INTERPROCEDURAL_OPTIMIZATION TRUE)
 endif()
+
+### ► generate board target and make the FCU target link to it
+add_library(brd_fcudev INTERFACE)
+add_custom_command(OUTPUT ${PROJECT_BINARY_DIR}/boards/fcudev/board.h
+    COMMAND python ${PROJECT_SOURCE_DIR}/tools/gen-board.h/gen-board-header ${PROJECT_SOURCE_DIR}/src/boards/fcudev/board.yml ${PROJECT_BINARY_DIR}/boards/fcudev/board.h
+    DEPENDS ${PROJECT_SOURCE_DIR}/src/boards/fcudev/board.yml)
+target_sources(brd_fcudev INTERFACE
+    ${PROJECT_SOURCE_DIR}/src/boards/fcudev/board.c
+    ${PROJECT_BINARY_DIR}/boards/fcudev/board.h)
+target_include_directories(brd_fcudev INTERFACE ${PROJECT_BINARY_DIR}/boards/fcudev)
+
+target_link_libraries(fcu brd_fcudev)
 
 ### ► configure ChibiOS stack sizes and which linker script we use for the Flight Control Unit target
 set(CHIBIOS_MAIN_STACK_SIZE 0x400)
