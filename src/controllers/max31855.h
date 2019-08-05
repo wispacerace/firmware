@@ -11,19 +11,18 @@ enum class Max31855State {
 };
 
 class Max31855 {
-public:
-	Max31855(SPIDriver &spi_driver, SPIConfig &spi_config)
-	    : m_spi_driver(spi_driver),
-	      m_spi_config(spi_config),
-	      state(Max31855State::UNINIT) {}
+  public:
+    Max31855(SPIDriver &spi_driver, SPIConfig &spi_config)
+        : m_spi_driver(spi_driver), m_spi_config(spi_config),
+          state(Max31855State::UNINIT) {}
 
-	void start();
+    void start();
 
-private:
-	uint32_t spi_read();
+  private:
+    uint32_t spi_read();
 
-	SPIDriver &m_spi_driver;
-	SPIConfig &m_spi_config;
+    SPIDriver &m_spi_driver;
+    SPIConfig &m_spi_config;
 
-	Max31855State state;
+    Max31855State state;
 };
