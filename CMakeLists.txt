@@ -60,16 +60,17 @@ if(is_ipo_supported)
 endif()
 
 ### ► generate board target and make the FCU target link to it
-add_library(brd_fcudev INTERFACE)
+add_library(board-fcudev INTERFACE)
+file(MAKE_DIRECTORY "${PROJECT_BINARY_DIR}/boards/fcudev") # make sure to create the folder that we put the output header in
 add_custom_command(OUTPUT ${PROJECT_BINARY_DIR}/boards/fcudev/board.h
     COMMAND python3 ${PROJECT_SOURCE_DIR}/tools/gen-board.h/gen-board-header ${PROJECT_SOURCE_DIR}/src/boards/fcudev/board.yml ${PROJECT_BINARY_DIR}/boards/fcudev/board.h
     DEPENDS ${PROJECT_SOURCE_DIR}/src/boards/fcudev/board.yml)
-target_sources(brd_fcudev INTERFACE
+target_sources(board-fcudev INTERFACE
     ${PROJECT_SOURCE_DIR}/src/boards/fcudev/board.c
     ${PROJECT_BINARY_DIR}/boards/fcudev/board.h)
-target_include_directories(brd_fcudev INTERFACE ${PROJECT_BINARY_DIR}/boards/fcudev)
+target_include_directories(board-fcudev INTERFACE ${PROJECT_BINARY_DIR}/boards/fcudev)
 
-target_link_libraries(fcu brd_fcudev)
+target_link_libraries(fcu board-fcudev)
 
 ### ► configure ChibiOS stack sizes and which linker script we use for the Flight Control Unit target
 set(CHIBIOS_MAIN_STACK_SIZE 0x400)
