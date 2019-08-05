@@ -33,6 +33,8 @@ int main() {
 
     Max31855 tcouple(SPID1, spicfg);
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wmissing-noreturn"
     while (true) {
     	// reset the watchdog timer (let the chip know we're alive) every turn of the main thread's loop
     	wdgReset(&WDGD1);
@@ -42,4 +44,5 @@ int main() {
 	    // other threads will run in this time, obviously.
 	    chThdSleepMilliseconds(500);
     }
+#pragma clang diagnostic pop
 }
