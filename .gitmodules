@@ -4,3 +4,6 @@
 [submodule "tools/gen-board.h"]
 	path = tools/gen-board.h
 	url = https://github.com/HarkonenBade/gen-board.h
+[submodule "vendor/units"]
+	path = vendor/units
+	url = https://github.com/boostorg/units
