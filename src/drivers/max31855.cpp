@@ -37,7 +37,7 @@ quantity<absolute<celsius::temperature>, float> demangle_temp_thermocouple(uint1
 
     // we'll now turn it into a float and wrap it with proper units;
     // the raw thermocouple temp is given in units of 0.25°C.
-    return 0.25f*absolute<celsius::temperature>();
+    return static_cast<float>(signed_temp) * 0.25f*absolute<celsius::temperature>();
 }
 
 quantity<absolute<celsius::temperature>, float> demangle_temp_internal(uint16_t internal_temp) {
@@ -48,5 +48,5 @@ quantity<absolute<celsius::temperature>, float> demangle_temp_internal(uint16_t 
 
     // we'll now turn it into a float and wrap it with proper units;
     // the internal thermocouple temp is given in units of 0.0625°C.
-    return 0.0625f*absolute<celsius::temperature>();
+    return static_cast<float>(signed_temp) * 0.0625f*absolute<celsius::temperature>();
 }
