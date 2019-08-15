@@ -54,11 +54,7 @@ find_package(ChibiOS) # this invokes cmake/FindChibiOS.cmake
 ###     - ChibiOS::CPPWrappers → C++ wrappers and runtime builtins
 target_link_libraries(fcu ChibiOS::RT ChibiOS::HAL ChibiOS::CPPWrappers)
 
-### ► find Boost
-find_package(Boost 1.50 REQUIRED)
-
 ## ► link FCU target against other libraries we need
-target_link_libraries(fcu Boost::units)
 
 ### ► enable link-time optimization on the Flight Control Unit target
 if(is_ipo_supported)
