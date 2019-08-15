@@ -2,15 +2,14 @@ cmake_minimum_required(VERSION 3.12) # ensure we're running on a modern CMake.
                                      # sorry, Ubuntu and/or Debian users! to get a recent version of CMake,
                                      # add the Kitware apt repository via the instructions at https://apt.kitware.com/
 
+### ► set the project to build using the ARM gcc cross-compilation toolchain with Cortex-M4 specific options
+set(CMAKE_TOOLCHAIN_FILE "cmake/gcc_stm32f4.cmake")
 
 ### ► configure a C, C++17, Assembly project to hold targets
 project(firmware
         LANGUAGES C CXX)
 set(CMAKE_CXX_STANDARD 17) # use the C++17 standard
 enable_language(ASM) # enable assembly support; used for the startup code and interrupt vector tables inside ChibiOS
-
-### ► set the project to build using the ARM gcc cross-compilation toolchain with Cortex-M4 specific options
-set(CMAKE_TOOLCHAIN_FILE "cmake/gcc_stm32f4.cmake")
 
 ### ► make sure Git submodules have been checked out, and check them out if they aren't
 find_package(Git QUIET)
