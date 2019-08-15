@@ -29,7 +29,7 @@ Max31855RawReading Max31855::raw_spi_read() {
     return bit_cast<Max31855RawReading>(data);
 }
 
-quantity<celsius::temperature, float> demangle_temp_thermocouple(uint16_t thermocouple_temp) {
+quantity<absolute<celsius::temperature>, float> demangle_temp_thermocouple(uint16_t thermocouple_temp) {
     // thermocouple_temp is a 14-bit 2's complement signed integer, packed into a uint16_t.
     // to get a int16_t out of this, we'll shift it left two bits to get the sign bit where
     // it should be, and then divide by 1<<2 = 4 to restore the magnitude.
@@ -37,10 +37,10 @@ quantity<celsius::temperature, float> demangle_temp_thermocouple(uint16_t thermo
 
     // we'll now turn it into a float and wrap it with proper units;
     // the raw thermocouple temp is given in units of 0.25°C.
-    return 0.25f*celsius::degrees;
+    return 0.25f*absolute<celsius::temperature>();
 }
 
-quantity<celsius::temperature, float> demangle_temp_internal(uint16_t internal_temp) {
+quantity<absolute<celsius::temperature>, float> demangle_temp_internal(uint16_t internal_temp) {
     // internal_temp is a 12-bit 2's complement signed integer, packed into a uint16_t.
     // to get a int16_t out of this, we'll shift it left four bits to get the sign bit where
     // it should be, and then divide by 1<<4 = 16 to restore the magnitude.
@@ -48,5 +48,5 @@ quantity<celsius::temperature, float> demangle_temp_internal(uint16_t internal_t
 
     // we'll now turn it into a float and wrap it with proper units;
     // the internal thermocouple temp is given in units of 0.0625°C.
-    return 0.0625f*celsius::degrees;
+    return 0.0625f*absolute<celsius::temperature>();
 }
