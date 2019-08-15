@@ -173,3 +173,7 @@ fabric.properties
 
 # Sonarlint plugin
 .idea/sonarlint
+
+# ---- SonarQube
+.sonar/
+.scannerwork/
