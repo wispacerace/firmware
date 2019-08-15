@@ -28,11 +28,9 @@ if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
 endif()
 
 if(NOT EXISTS "${PROJECT_SOURCE_DIR}/vendor/ChibiOS/readme.txt"
-    OR NOT EXISTS "${PROJECT_SOURCE_DIR}/tools/gen-board.h/README.md"
-    OR NOT EXISTS "${PROJECT_SOURCE_DIR}/vendor/units/README.md")
+    OR NOT EXISTS "${PROJECT_SOURCE_DIR}/tools/gen-board.h/README.md")
     message(FATAL_ERROR "The submodules were not downloaded! GIT_SUBMODULE was turned off or failed. Please update submodules and try again.")
 endif()
-
 
 ### ► check if IPO (link time optimization) is supported by the compiler. If the is_ipo_supported flag is true, we will turn on link-time optimization later.
 include(CheckIPOSupported)
@@ -55,7 +53,12 @@ find_package(ChibiOS) # this invokes cmake/FindChibiOS.cmake
 ###     - ChibiOS::CPPWrappers → C++ wrappers and runtime builtins
 target_link_libraries(fcu ChibiOS::RT ChibiOS::HAL ChibiOS::CPPWrappers)
 
-## ► link FCU target against other libraries we need
+### ► find vendored Boost subset
+set(VendoredBoost_ROOT "${PROJECT_SOURCE_DIR}/vendor/boost")
+find_package(VendoredBoost)
+
+### ► link FCU target against other libraries we need
+target_link_libraries(fcu Boost::vendored)
 
 ### ► enable link-time optimization on the Flight Control Unit target
 if(is_ipo_supported)

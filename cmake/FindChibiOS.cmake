@@ -37,7 +37,7 @@ include(ChibiOS/ChibiOS_Boards)
 ### ► create one more target: the ChibiOS C++ wrappers library, which provides C++ runtime builtins and lightweight C++ wrappers over the kernel API
 add_library(ChibiOS::CPPWrappers INTERFACE IMPORTED)
 target_sources(ChibiOS::CPPWrappers INTERFACE
-		${ChibiOS_ROOT}/os/various/cpp_wrappers/ch.cpp
-		${ChibiOS_ROOT}/os/various/cpp_wrappers/syscalls_cpp.cpp)
+        ${ChibiOS_ROOT}/os/various/cpp_wrappers/ch.cpp
+        ${ChibiOS_ROOT}/os/various/cpp_wrappers/syscalls_cpp.cpp)
 target_include_directories(ChibiOS::CPPWrappers INTERFACE
-		${ChibiOS_ROOT}/os/various/cpp_wrappers)
+        ${ChibiOS_ROOT}/os/various/cpp_wrappers)
