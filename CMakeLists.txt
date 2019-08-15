@@ -28,7 +28,8 @@ if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
 endif()
 
 if(NOT EXISTS "${PROJECT_SOURCE_DIR}/vendor/ChibiOS/readme.txt"
-    OR NOT EXISTS "${PROJECT_SOURCE_DIR}/tools/gen-board.h/README.md")
+    OR NOT EXISTS "${PROJECT_SOURCE_DIR}/tools/gen-board.h/README.md"
+    OR NOT EXISTS "${PROJECT_SOURCE_DIR}/vendor/units/README.md")
     message(FATAL_ERROR "The submodules were not downloaded! GIT_SUBMODULE was turned off or failed. Please update submodules and try again.")
 endif()
 
