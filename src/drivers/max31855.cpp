@@ -20,6 +20,19 @@ void Max31855::start() {
     this->state = Max31855State::Ready;
 }
 
+bool Max31855::fault_any() {
+    return this->raw_spi_read().fault_any;
+}
+bool Max31855::fault_short_vcc() {
+    return this->raw_spi_read().fault_short_vcc;
+}
+bool Max31855::fault_short_gnd() {
+    return this->raw_spi_read().fault_short_gnd;
+}
+bool Max31855::fault_open() {
+    return this->raw_spi_read().fault_open;
+}
+
 Max31855RawReading Max31855::raw_spi_read() {
     spiSelect(&this->m_spi_driver);
     std::array<uint8_t, 4> data = {};
