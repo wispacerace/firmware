@@ -2,7 +2,16 @@
 #include "ch.h"
 #include "hal.h"
 
+#include <bitset>
+
+#include <boost/units/systems/temperature/celsius.hpp>
+#include <boost/units/systems/si.hpp>
+
+using namespace boost::units;
+using namespace boost::units::si;
+
 #define MAX31855_SHARED TRUE
+#define MAX31855_DEBUG_SPI TRUE
 
 enum class Max31855State {
     Uninit,
@@ -10,20 +19,21 @@ enum class Max31855State {
     Ready,
 };
 
-/// This describes a single 4-byte raw reading we get from the MAX31855,
-/// laid out exactly as described in the datasheet.
-struct __attribute__((packed)) Max31855RawReading {
-    uint16_t thermocouple_temp : 14;
-    /* ==== reserved ==== */ uint8_t _reserved1 : 1;
-    bool fault_any : 1;
-    uint16_t internal_temp : 12;
-    /* ==== reserved ==== */ uint8_t _reserved2 : 1;
-    bool fault_short_vcc : 1;
-    bool fault_short_gnd : 1;
-    bool fault_open : 1;
+class Max31855Reading {
+public:
+    Max31855Reading(uint32_t raw) : inner(raw) {}
+
+    bool fault_any() const;
+    bool fault_short_vcc() const;
+    bool fault_short_gnd() const;
+    bool fault_open() const;
+
+    quantity<absolute<celsius::temperature>, float> internal_temp() const;
+    quantity<absolute<celsius::temperature>, float> thermocouple_temp() const;
+
+private:
+    uint32_t inner;
 };
-// make sure we didn't screw up; the struct should pack to 4 bytes (exactly, but we can't check that).
-static_assert(sizeof(Max31855RawReading) == 4, "Max31855RawReading didn't pack to a uint32_t");
 
 class Max31855 {
 public:
@@ -34,13 +44,10 @@ public:
 
     void start();
 
-    bool fault_any();
-    bool fault_short_vcc();
-    bool fault_short_gnd();
-    bool fault_open();
+    Max31855Reading read();
 
 private:
-    Max31855RawReading raw_spi_read();
+    uint32_t raw_spi_read();
 
     SPIDriver &m_spi_driver;
     SPIConfig &m_spi_config;

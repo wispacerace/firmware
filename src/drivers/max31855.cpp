@@ -1,12 +1,21 @@
 #include <array>
+#include <algorithm>
 #include <boost/units/systems/temperature/celsius.hpp>
 #include <boost/units/systems/si.hpp>
+#include "util/impl_bit_cast.h"
 
 #include "max31855.h"
-#include "util/impl_bit_cast.h"
+#include "chprintf.h"
 
 using namespace boost::units;
 using namespace boost::units::si;
+
+constexpr auto BIT_FAULT_OPEN = 0;
+constexpr auto BIT_FAULT_SHORT_GND = 1;
+constexpr auto BIT_FAULT_SHORT_VCC = 2;
+constexpr auto BIT_FAULT_ANY = 16;
+
+
 
 void Max31855::start() {
 #ifdef MAX31855_SHARED
@@ -20,26 +29,56 @@ void Max31855::start() {
     this->state = Max31855State::Ready;
 }
 
-bool Max31855::fault_any() {
-    return this->raw_spi_read().fault_any;
+bool Max31855Reading::fault_any() const {
+    return (this->inner & (1 << BIT_FAULT_ANY)) != 0;
 }
-bool Max31855::fault_short_vcc() {
-    return this->raw_spi_read().fault_short_vcc;
+bool Max31855Reading::fault_short_vcc() const {
+    return (this->inner & (1 << BIT_FAULT_SHORT_VCC)) != 0;
 }
-bool Max31855::fault_short_gnd() {
-    return this->raw_spi_read().fault_short_gnd;
+bool Max31855Reading::fault_short_gnd() const {
+    return (this->inner & (1 << BIT_FAULT_SHORT_GND)) != 0;
 }
-bool Max31855::fault_open() {
-    return this->raw_spi_read().fault_open;
+bool Max31855Reading::fault_open() const {
+    return (this->inner & (1 << BIT_FAULT_OPEN)) != 0;
 }
 
-Max31855RawReading Max31855::raw_spi_read() {
+quantity<absolute<celsius::temperature>, float> Max31855Reading::internal_temp() const {
+#ifdef MAX31855_DEBUG
+    chprintf((BaseSequentialStream*)&SD3, "[max31855] itemp extracted raw: %X from %X\n", (this->inner >> 4) & (0b111111111111), this->inner);
+#endif
+
+    return demangle_temp_internal((this->inner >> 4) & (0b111111111111));
+}
+quantity<absolute<celsius::temperature>, float> Max31855Reading::thermocouple_temp() const {
+#ifdef MAX31855_DEBUG
+    chprintf((BaseSequentialStream*)&SD3, "[max31855] ttemp extracted raw: %X from %X\n", (this->inner >> 18), this->inner);
+#endif
+
+    return demangle_temp_thermocouple(this->inner >> 18);
+}
+
+Max31855Reading Max31855::read() {
+    return Max31855Reading(this->raw_spi_read());
+}
+
+uint32_t Max31855::raw_spi_read() {
+#ifdef MAX31855_SHARED
+    spiAcquireBus(&this->m_spi_driver);
+    spiStart(&this->m_spi_driver, &this->m_spi_config);
+#endif
     spiSelect(&this->m_spi_driver);
     std::array<uint8_t, 4> data = {};
     spiReceive(&this->m_spi_driver, 4, data.data());
     spiUnselect(&this->m_spi_driver);
+#ifdef MAX31855_SHARED
+    spiReleaseBus(&this->m_spi_driver);
+#endif
 
-    return bit_cast<Max31855RawReading>(data);
+#ifdef MAX31855_DEBUG
+    chprintf((BaseSequentialStream*)&SD3, "[max31855] raw data: %x %x %x %x\n", data[0], data[1], data[2], data[3]);
+#endif
+
+    return data[0]<<24 | data[1] << 16 | data[2] << 8 | data[3] << 0;
 }
 
 quantity<absolute<celsius::temperature>, float> demangle_temp_thermocouple(uint16_t thermocouple_temp) {
