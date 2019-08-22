@@ -5,6 +5,15 @@ cmake_minimum_required(VERSION 3.12) # ensure we're running on a modern CMake.
 ### ► set the project to build using the ARM gcc cross-compilation toolchain with Cortex-M4 specific options
 set(CMAKE_TOOLCHAIN_FILE "cmake/gcc_stm32f4.cmake")
 
+### Work around a GCC bug.
+# By default, CMake passes include directories for imported targets to the compiler as -isystem flags. However, all
+# ARM Holdings produced arm-none-eabi toolchains ship a version of GCC <9 which automatically wraps any headers included
+# via an -isystem flag in exterm "C" {...}, for reasons that originate in the early-to-mid 1990s.
+#
+# Setting this flag makes CMake default to -I for imported libraries, instead of automatically flagging them as SYSTEM
+# (and thus, included with -isystem).
+set(CMAKE_NO_SYSTEM_FROM_IMPORTED TRUE)
+
 ### ► configure a C, C++17, Assembly project to hold targets
 project(firmware
         LANGUAGES C CXX)
