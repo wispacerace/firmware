@@ -13,6 +13,10 @@ pins:
   SPI1_MOSI: pa7, af5
   SPI1_CS: pf13, output, pushpull
 
+  # usart3
+  USART3_RX: pd8, af7
+  USART3_TX: pd9, af7
+
   LED1: pb0,  output, pushpull, startlow
   LED2: pb7,  output, pushpull, startlow
   LED3: pb14, output, pushpull, startlow
