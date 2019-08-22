@@ -57,7 +57,9 @@ find_package(ChibiOS) # this invokes cmake/FindChibiOS.cmake
 ###     - ChibiOS::RT → the actual ChibiOS kernel
 ###     - ChibiOS::HAL → the ChibiOS hardware abstraction layer
 ###     - ChibiOS::CPPWrappers → C++ wrappers and runtime builtins
-target_link_libraries(fcu ChibiOS::RT ChibiOS::HAL ChibiOS::CPPWrappers)
+###     - Chibios::HAL::Streams → stream device routines
+target_link_libraries(fcu
+    ChibiOS::RT ChibiOS::HAL ChibiOS::CPPWrappers ChibiOS::HAL::Streams)
 
 ### ► find vendored Boost subset
 set(VendoredBoost_ROOT "${PROJECT_SOURCE_DIR}/vendor/boost")

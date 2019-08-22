@@ -190,3 +190,13 @@ foreach(subsystem ${ChibiOS_HAL_FEATURES})
     target_include_directories(ChibiOS::HAL INTERFACE
             ${ChibiOS_INCLUDES_HAL_LLD_F4_${subsystem}})
 endforeach()
+
+### ► add ChibiOS HAL streams library target
+add_library(ChibiOS::HAL::Streams INTERFACE IMPORTED)
+target_sources(ChibiOS::HAL::Streams INTERFACE
+    ${ChibiOS_ROOT}/os/hal/lib/streams/chprintf.c
+    ${ChibiOS_ROOT}/os/hal/lib/streams/memstreams.c
+    ${ChibiOS_ROOT}/os/hal/lib/streams/nullstreams.c)
+target_include_directories(ChibiOS::HAL::Streams INTERFACE
+    ${ChibiOS_ROOT}/os/hal/lib/streams)
+target_compile_definitions(ChibiOS::HAL::Streams INTERFACE "CHPRINTF_USE_FLOAT=TRUE")
