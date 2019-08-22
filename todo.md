@@ -1,0 +1,3 @@
+- [x] fork `gen-board.h` and gitignore `*.pyc`, `__pycache__` to keep the submodule from being flagged as dirty
+- [x] finish max31855 implementation and write a basic test loop (thread that reads the tcouple and echoes to serial)
+- [ ] fully document max31855 (and potentially figure out a documentation generator solution)
