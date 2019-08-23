@@ -145,7 +145,7 @@ set(ChibiOS_INCLUDES_HAL_LLD_F4_I2S
         ${ChibiOS_ROOT}/os/hal/ports/STM32/LLD/SPIv1)
 
 set(ChibiOS_SOURCES_HAL_LLD_F4_SDC
-        ${ChibiOS_ROOT}/os/hal/ports/STM32/LLD/SDIOV1/hal_sdc_lld.c)
+        ${ChibiOS_ROOT}/os/hal/ports/STM32/LLD/SDIOv1/hal_sdc_lld.c)
 set(ChibiOS_INCLUDES_HAL_LLD_F4_SDC
         ${ChibiOS_ROOT}/os/hal/ports/STM32/LLD/SDIOv1)
 
