@@ -15,7 +15,27 @@ constexpr auto BIT_FAULT_SHORT_GND = 1;
 constexpr auto BIT_FAULT_SHORT_VCC = 2;
 constexpr auto BIT_FAULT_ANY = 16;
 
+quantity<absolute<celsius::temperature>, float> demangle_temp_thermocouple(uint16_t thermocouple_temp) {
+    // thermocouple_temp is a 14-bit 2's complement signed integer, packed into a uint16_t.
+    // to get a int16_t out of this, we'll shift it left two bits to get the sign bit where
+    // it should be, and then divide by 1<<2 = 4 to restore the magnitude.
+    auto signed_temp = bit_cast<int16_t>((uint16_t)(thermocouple_temp<<2)) / 4;
 
+    // we'll now turn it into a float and wrap it with proper units;
+    // the raw thermocouple temp is given in units of 0.25°C.
+    return static_cast<float>(signed_temp) * 0.25f*absolute<celsius::temperature>();
+}
+
+quantity<absolute<celsius::temperature>, float> demangle_temp_internal(uint16_t internal_temp) {
+    // internal_temp is a 12-bit 2's complement signed integer, packed into a uint16_t.
+    // to get a int16_t out of this, we'll shift it left four bits to get the sign bit where
+    // it should be, and then divide by 1<<4 = 16 to restore the magnitude.
+    auto signed_temp = bit_cast<int16_t>((uint16_t)(internal_temp<<4)) / 16;
+
+    // we'll now turn it into a float and wrap it with proper units;
+    // the internal thermocouple temp is given in units of 0.0625°C.
+    return static_cast<float>(signed_temp) * 0.0625f*absolute<celsius::temperature>();
+}
 
 void Max31855::start() {
 #ifdef MAX31855_SHARED
@@ -79,26 +99,4 @@ uint32_t Max31855::raw_spi_read() {
 #endif
 
     return data[0]<<24 | data[1] << 16 | data[2] << 8 | data[3] << 0;
-}
-
-quantity<absolute<celsius::temperature>, float> demangle_temp_thermocouple(uint16_t thermocouple_temp) {
-    // thermocouple_temp is a 14-bit 2's complement signed integer, packed into a uint16_t.
-    // to get a int16_t out of this, we'll shift it left two bits to get the sign bit where
-    // it should be, and then divide by 1<<2 = 4 to restore the magnitude.
-    auto signed_temp = bit_cast<int16_t>((uint16_t)(thermocouple_temp<<2)) / 4;
-
-    // we'll now turn it into a float and wrap it with proper units;
-    // the raw thermocouple temp is given in units of 0.25°C.
-    return static_cast<float>(signed_temp) * 0.25f*absolute<celsius::temperature>();
-}
-
-quantity<absolute<celsius::temperature>, float> demangle_temp_internal(uint16_t internal_temp) {
-    // internal_temp is a 12-bit 2's complement signed integer, packed into a uint16_t.
-    // to get a int16_t out of this, we'll shift it left four bits to get the sign bit where
-    // it should be, and then divide by 1<<4 = 16 to restore the magnitude.
-    auto signed_temp = bit_cast<int16_t>((uint16_t)(internal_temp<<4)) / 16;
-
-    // we'll now turn it into a float and wrap it with proper units;
-    // the internal thermocouple temp is given in units of 0.0625°C.
-    return static_cast<float>(signed_temp) * 0.0625f*absolute<celsius::temperature>();
 }

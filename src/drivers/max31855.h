@@ -11,7 +11,7 @@ using namespace boost::units;
 using namespace boost::units::si;
 
 #define MAX31855_SHARED TRUE
-#define MAX31855_DEBUG_SPI TRUE
+#define MAX31855_DEBUG FALSE
 
 enum class Max31855State {
     Uninit,
