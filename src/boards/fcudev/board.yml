@@ -24,3 +24,11 @@ pins:
   # fix SWD
   SWCK: pa14, af0, floating
   SWDIO: pa13, af0, floating
+
+  # SDIO
+  SDIO_D0: pc8, af12
+  SDIO_D1: pc9, af12
+  SDIO_D2: pc10, af12
+  SDIO_D3: pc11, af12
+  SDIO_CLK: pc12, af12
+  SDIO_CMD: pd2, af12
