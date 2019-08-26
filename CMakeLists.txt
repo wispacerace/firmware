@@ -134,8 +134,8 @@ add_custom_target(fcu.bin
 
 ## ► flash target for fcu
 if (DEFINED ENV{STLINK_BOARD_SERIAL})
-    set(FLASHFLAGS --serial $ENV{STLINK_BOARD_SERIAL})
+    set(FCU_SERIAL_FLAGS --serial $ENV{STLINK_BOARD_SERIAL})
 endif()
 add_custom_target(flash-fcu
     DEPENDS fcu.bin
-    COMMAND st-flash write ${FLASHFLAGS} fcu.bin 0x8000000) # 0x800_0000 is the base address for flash in STM32F4xx chips.
+    COMMAND st-flash ${FCU_SERIAL_FLAGS} write fcu.bin 0x8000000) # 0x800_0000 is the base address for flash in STM32F4xx chips.
