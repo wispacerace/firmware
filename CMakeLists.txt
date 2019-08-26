@@ -127,7 +127,15 @@ target_compile_options(fcu PUBLIC
                                          # this disables RTTI, which is basically runtime type information
     )
 
-### ► flash target for fcu
-add_custom_target(flash-fcu
+### ► raw binary for fcu
+add_custom_target(fcu.bin
     DEPENDS fcu
-    COMMAND openocd --file ${PROJECT_SOURCE_DIR}/dbg-scripts/flash-fcu.cfg)
+    COMMAND ${CMAKE_OBJCOPY} -O binary fcu.elf fcu.bin)
+
+## ► flash target for fcu
+if (DEFINED ENV{STLINK_BOARD_SERIAL})
+    set(FLASHFLAGS --serial $ENV{STLINK_BOARD_SERIAL})
+endif()
+add_custom_target(flash-fcu
+    DEPENDS fcu.bin
+    COMMAND st-flash write ${FLASHFLAGS} fcu.bin 0x8000000) # 0x800_0000 is the base address for flash in STM32F4xx chips.
