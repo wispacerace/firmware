@@ -54,9 +54,22 @@ check_ipo_supported(RESULT is_ipo_supported)
 add_compile_options(-fdiagnostics-color=always)
 
 ### ► add the Flight Control Unit firmware as an executable target
-add_executable(fcu src/fcu.cpp src/drivers/max31855.cpp)
+add_executable(fcu src/fcu.cpp src/drivers/max31855.cpp src/filesystem.cpp)
 set_target_properties(fcu PROPERTIES SUFFIX ".elf")
 target_include_directories(fcu PRIVATE src/ src/cfg/)
+
+### ► generate board target and make the FCU target link to it
+add_library(board-fcudev INTERFACE)
+file(MAKE_DIRECTORY "${PROJECT_BINARY_DIR}/boards/fcudev") # make sure to create the folder that we put the output header in
+add_custom_command(OUTPUT ${PROJECT_BINARY_DIR}/boards/fcudev/board.h
+        COMMAND python3 ${PROJECT_SOURCE_DIR}/tools/gen-board.h/gen-board-header ${PROJECT_SOURCE_DIR}/src/boards/fcudev/board.yml ${PROJECT_BINARY_DIR}/boards/fcudev/board.h
+        DEPENDS ${PROJECT_SOURCE_DIR}/src/boards/fcudev/board.yml)
+target_sources(board-fcudev INTERFACE
+        ${PROJECT_SOURCE_DIR}/src/boards/fcudev/board.c
+        ${PROJECT_BINARY_DIR}/boards/fcudev/board.h)
+target_include_directories(board-fcudev INTERFACE ${PROJECT_BINARY_DIR}/boards/fcudev)
+
+target_link_libraries(fcu board-fcudev)
 
 ### ► set variables pointing to ChibiOS tree and our configuration files for it, and then "find" it (load the targets that we can build it with).
 set(ChibiOS_ROOT "${PROJECT_SOURCE_DIR}/vendor/ChibiOS")
@@ -70,32 +83,24 @@ find_package(ChibiOS) # this invokes cmake/FindChibiOS.cmake
 ###     - ChibiOS::CPPWrappers → C++ wrappers and runtime builtins
 ###     - Chibios::HAL::Streams → stream device routines
 target_link_libraries(fcu
-    ChibiOS::RT ChibiOS::HAL ChibiOS::CPPWrappers ChibiOS::HAL::Streams)
+    ChibiOS::RT ChibiOS::HAL ChibiOS::CPPWrappers ChibiOS::HAL::Streams ChibiOS::FatFSBindings)
 
 ### ► find vendored Boost subset
 set(VendoredBoost_ROOT "${PROJECT_SOURCE_DIR}/vendor/boost")
 find_package(VendoredBoost)
 
+### ► find other libraries
+set(FatFs_ROOT "${PROJECT_SOURCE_DIR}/vendor/fatfs")
+find_package(FatFs)
+
 ### ► link FCU target against other libraries we need
 target_link_libraries(fcu Boost::vendored)
+target_link_libraries(fcu FatFs)
 
 ### ► enable link-time optimization on the Flight Control Unit target
 if(is_ipo_supported)
     set_target_properties(fcu PROPERTIES INTERPROCEDURAL_OPTIMIZATION TRUE)
 endif()
-
-### ► generate board target and make the FCU target link to it
-add_library(board-fcudev INTERFACE)
-file(MAKE_DIRECTORY "${PROJECT_BINARY_DIR}/boards/fcudev") # make sure to create the folder that we put the output header in
-add_custom_command(OUTPUT ${PROJECT_BINARY_DIR}/boards/fcudev/board.h
-    COMMAND python3 ${PROJECT_SOURCE_DIR}/tools/gen-board.h/gen-board-header ${PROJECT_SOURCE_DIR}/src/boards/fcudev/board.yml ${PROJECT_BINARY_DIR}/boards/fcudev/board.h
-    DEPENDS ${PROJECT_SOURCE_DIR}/src/boards/fcudev/board.yml)
-target_sources(board-fcudev INTERFACE
-    ${PROJECT_SOURCE_DIR}/src/boards/fcudev/board.c
-    ${PROJECT_BINARY_DIR}/boards/fcudev/board.h)
-target_include_directories(board-fcudev INTERFACE ${PROJECT_BINARY_DIR}/boards/fcudev)
-
-target_link_libraries(fcu board-fcudev)
 
 ### ► configure ChibiOS stack sizes and which linker script we use for the Flight Control Unit target
 set(CHIBIOS_MAIN_STACK_SIZE 0x400)
