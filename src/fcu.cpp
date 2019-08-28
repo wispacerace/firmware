@@ -99,6 +99,8 @@ int main() {
         chprintf((BaseSequentialStream*)&SD3, "Capacity : %DMB\r\n", SDCD1.capacity / 2048);
     }
 
+    init_fs();
+
     thd_tcouple.start(NORMALPRIO + 10);
 
 #pragma clang diagnostic push
