@@ -4,7 +4,6 @@
 #include "hal.h"
 #include "chprintf.h"
 
-#include "filesystem.h"
 #include "drivers/max31855.h"
 
 using namespace chibios_rt;
@@ -37,6 +36,8 @@ class ThermocoupleThread : public BaseStaticThread<512> {
 public:
     ThermocoupleThread(Max31855 tcouple) : m_tcouple(std::move(tcouple)) {}
 protected:
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wmissing-noreturn"
     void main() override {
         setName("tcouple");
 
@@ -55,6 +56,7 @@ protected:
             chThdSleepMilliseconds(200);
         }
     }
+#pragma clang diagnostic pop
 
 private:
     Max31855 m_tcouple;
