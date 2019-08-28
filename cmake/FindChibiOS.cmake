@@ -41,3 +41,9 @@ target_sources(ChibiOS::CPPWrappers INTERFACE
         ${ChibiOS_ROOT}/os/various/cpp_wrappers/syscalls_cpp.cpp)
 target_include_directories(ChibiOS::CPPWrappers INTERFACE
         ${ChibiOS_ROOT}/os/various/cpp_wrappers)
+
+### ► and here's one _more_ target! the fatfs interface module from ChibiOS
+add_library(ChibiOS::FatFSBindings INTERFACE IMPORTED)
+target_sources(ChibiOS::FatFSBindings INTERFACE
+        ${ChibiOS_ROOT}/os/various/fatfs_bindings/fatfs_diskio.c
+        ${ChibiOS_ROOT}/os/various/fatfs_bindings/fatfs_syscall.c)
