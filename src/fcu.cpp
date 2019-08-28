@@ -4,6 +4,7 @@
 #include "hal.h"
 #include "chprintf.h"
 
+#include "filesystem.h"
 #include "drivers/max31855.h"
 
 using namespace chibios_rt;
