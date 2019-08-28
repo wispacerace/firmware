@@ -42,13 +42,13 @@ protected:
         m_tcouple.start();
         while (true) {
             auto reading = m_tcouple.read();
-            // chprintf((BaseSequentialStream*)&SD3, "faults: any short2vcc short2gnd open\n        %d   %d        %d       %d\n",
-            //     reading.fault_any(), reading.fault_short_vcc(), reading.fault_short_gnd(), reading.fault_open());
+            chprintf((BaseSequentialStream*)&SD3, "faults: any short2vcc short2gnd open\n        %d   %d        %d       %d\n",
+                reading.fault_any(), reading.fault_short_vcc(), reading.fault_short_gnd(), reading.fault_open());
             auto itemp = reading.internal_temp();
             auto ttemp = reading.thermocouple_temp();
 
-            // chprintf((BaseSequentialStream*)&SD3, "internal temp is: %f\n", itemp.value());
-            // chprintf((BaseSequentialStream*)&SD3, "thermocouple temp is: %f\n", ttemp.value());
+            chprintf((BaseSequentialStream*)&SD3, "internal temp is: %f\n", itemp.value());
+            chprintf((BaseSequentialStream*)&SD3, "thermocouple temp is: %f\n", ttemp.value());
 
             palToggleLine(LINE_LED2);
             chThdSleepMilliseconds(200);
