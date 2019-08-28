@@ -4,6 +4,7 @@
 #include "hal.h"
 #include "chprintf.h"
 
+#include "filesystem.h"
 #include "drivers/max31855.h"
 
 using namespace chibios_rt;
@@ -64,12 +65,6 @@ private:
 
 static ThermocoupleThread thd_tcouple(Max31855(SPID1, spicfg));
 
-
-static uint8_t sdc_scratchpad[512];
-static SDCConfig sdc_config = {
-    .scratchpad = sdc_scratchpad,
-};
-
 int main() {
     halInit();
     System::init();
@@ -83,25 +78,9 @@ int main() {
     // which helps us recover from crashes where our code stops executing.
     wdgStart(&WDGD1, &wdg_config);
 
-    sdcStart(&SDCD1, &sdc_config);
+    fs_init();
 
-    chprintf((BaseSequentialStream*)&SD3, "[SDIO] Connecting... ");
-    if (sdcConnect(&SDCD1)) {
-        chprintf((BaseSequentialStream*)&SD3, "failed\r\n");
-    } else {
-        chprintf((BaseSequentialStream*)&SD3, "OK\r\n\r\nCard Info\r\n");
-        static const char *mode[] = {"SDV11", "SDV20", "MMC", NULL};
-        chprintf((BaseSequentialStream*)&SD3, "CSD      : %08X %8X %08X %08X \r\n",
-                    SDCD1.csd[3], SDCD1.csd[2], SDCD1.csd[1], SDCD1.csd[0]);
-        chprintf((BaseSequentialStream*)&SD3, "CID      : %08X %8X %08X %08X \r\n",
-                    SDCD1.cid[3], SDCD1.cid[2], SDCD1.cid[1], SDCD1.cid[0]);
-        chprintf((BaseSequentialStream*)&SD3, "Mode     : %s\r\n", mode[SDCD1.cardmode & 3U]);
-        chprintf((BaseSequentialStream*)&SD3, "Capacity : %DMB\r\n", SDCD1.capacity / 2048);
-    }
-
-    init_fs();
-
-    thd_tcouple.start(NORMALPRIO + 10);
+//    thd_tcouple.start(NORMALPRIO + 10);
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wmissing-noreturn"
