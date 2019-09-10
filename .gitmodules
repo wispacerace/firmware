@@ -1,6 +1,6 @@
 [submodule "vendor/ChibiOS"]
 	path = vendor/ChibiOS
-	url = https://github.com/ChibiOS/ChibiOS
+	url = https://github.com/wispacerace/ChibiOS
 [submodule "tools/gen-board.h"]
 	path = tools/gen-board.h
 	url = https://github.com/wispacerace/gen-board.h
