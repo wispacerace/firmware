@@ -29,6 +29,7 @@ static SPIConfig spicfg = {
     .circular = false,
     .end_cb = NULL,
     .ssline = LINE_SPI1_CS,
+
     .cr1 = SPI_CR1_BR_2 | SPI_CR1_BR_1,
     .cr2 = 0,
 };
@@ -80,7 +81,7 @@ int main() {
 
     fs_init();
 
-//    thd_tcouple.start(NORMALPRIO + 10);
+    // thd_tcouple.start(NORMALPRIO + 10);
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wmissing-noreturn"

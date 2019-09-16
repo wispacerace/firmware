@@ -38,18 +38,4 @@ void fs_init() {
     } else {
         chprintf((BaseSequentialStream*)&SD3, "FAIL (result = %d)\n", res);
     }
-
-    /* Open a text file */
-    auto fr = f_open(&fil, "message.txt", FA_READ);
-    chprintf((BaseSequentialStream*)&SD3, "%u", fr);
-    if (!fr) {
-        /* Read every line and display it */
-        while (f_gets(line, sizeof line, &fil)) {
-            chprintf((BaseSequentialStream*)&SD3, line);
-        }
-
-        /* Close the file */
-        f_close(&fil);
-    }
-
 }
