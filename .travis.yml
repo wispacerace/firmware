@@ -4,6 +4,16 @@ addons:
     organization: "wispacerace"
     token:
       secure: "QAWnQ1wq1rgK/z19YireiB3CZqvi6WB7Urp5d7UVN39ADsq5dvos2XnvXrfmVETEDfOi2i/bYTPfTpxhHw9NMFCzhedL9kltbiA0W4Yl130h3BStgHoinNRoWc214mtalKGw4ooHnIaq53qmAaj5nxS56yBmw4r8mUae0oo6NnLGMQqFncwaP6sTJYjsDCaMGv9OVt1D9BznJYvgOp9A4QtRF8mWRVy1nkW0xw9uD7+5dmBn3EtqSdFmBdcPxTXJ9EFyi03TnMrsjr/OavASMU/8SV7BjC++rgJVkDBXRhSRno7OvRDS92QVpiwenl/k4VQJwbXLgFLJgmKZ2B32ACfDaS1CLZ4nfzoPavC0Nx7/IkW0gEyRe4CVWEPvpBOVLsem4O4iwjG46XA71LYPkj1hv3AUKxI+uuWBb+NRW5usbf0t2E/IgAzRA/gWcK/HeBTJJMit0+KitrX7H2YlxfHDdI7uE4cX1sXyoY+pYdb27evNppfPjYxldrR6SgU8fxBcm4aRPBds11BCoYrUE/JVVi9wkmGrgz2ezgpMq/Ma/0lkzJ4m7SbavdJuOxJGvk/gQgIyIB07pMCpM3nuoV8HCVewxH6XZwvA2qZ7qxJ2a47mXOGKCUptnOsQxjZ5QrNnjQ47e2YLakRbYJfzXD24G6bJHQegTEeGuPfKR7Q="
+  apt:
+    packages:
+      - cmake-data
+      - cmake
+
+install:
+  - wget https://developer.arm.com/-/media/Files/downloads/gnu-rm/8-2019q3/RC1.1/gcc-arm-none-eabi-8-2019-q3-update-linux.tar.bz2 -O ~/toolchain.tar.bz2
+  - cd ~; tar xvf ~/toolchain.tar.bz2
 
 script:
-  - sonar-scanner
+  # - sonar-scanner
+  - mkdir build; cd build; cmake -DTOOLCHAIN_DIR=~/gcc-arm-none-eabi-8-2019-q3-update ..
+  - make
