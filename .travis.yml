@@ -15,5 +15,5 @@ install:
 
 script:
   # - sonar-scanner
-  - mkdir -p build; cd build; cmake -DTOOLCHAIN_DIR=~/gcc-arm-none-eabi-8-2019-q3-update ..
+  - mkdir -p build; cd build; cmake -DTOOLCHAIN_PATH=~/gcc-arm-none-eabi-8-2019-q3-update ..
   - make
