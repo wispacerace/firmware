@@ -9,16 +9,20 @@ if(TOOLCHAIN_PATH)
 	set(PATH_PREFIX ${TOOLCHAIN_PATH_ABSOLUTE}/bin/)
 endif()
 
-set(CMAKE_C_COMPILER   "${PATH_PREFIX}${triple}-gcc")
-set(CMAKE_CXX_COMPILER "${PATH_PREFIX}${triple}-g++")
-set(CMAKE_ASM_COMPILER "${PATH_PREFIX}${triple}-gcc")
+if(WIN32)
+	set(toolchain_binext ".exe")
+endif()
+
+set(CMAKE_C_COMPILER   "${PATH_PREFIX}${triple}-gcc${toolchain_binext}")
+set(CMAKE_CXX_COMPILER "${PATH_PREFIX}${triple}-g++${toolchain_binext}")
+set(CMAKE_ASM_COMPILER "${PATH_PREFIX}${triple}-gcc${toolchain_binext}")
 
 # don't try to link executables during internal compiler checks,
 # since linking will fail without a linker script.
 set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
 
-set(CMAKE_OBJCOPY  "${PATH_PREFIX}${triple}-objcopy")
-set(CMAKE_OBJDUMP  "${PATH_PREFIX}${triple}-objdump")
-set(CMAKE_SIZE     "${PATH_PREFIX}${triple}-size")
-set(CMAKE_DEBUGGER "${PATH_PREFIX}${triple}-gdb")
-set(CMAKE_CPPFILT  "${PATH_PREFIX}${triple}-c++filt")
+set(CMAKE_OBJCOPY  "${PATH_PREFIX}${triple}-objcopy${toolchain_binext}")
+set(CMAKE_OBJDUMP  "${PATH_PREFIX}${triple}-objdump${toolchain_binext}")
+set(CMAKE_SIZE     "${PATH_PREFIX}${triple}-size${toolchain_binext}")
+set(CMAKE_DEBUGGER "${PATH_PREFIX}${triple}-gdb${toolchain_binext}")
+set(CMAKE_CPPFILT  "${PATH_PREFIX}${triple}-c++filt${toolchain_binext}")
