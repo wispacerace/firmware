@@ -13,6 +13,14 @@ pins:
   SPI1_MOSI: pa7, af5
   SPI1_CS: pf13, output, pushpull
 
+  SPI3_SCK: pb3, af6
+  SPI3_MISO: pb4, af6
+  SPI3_MOSI: pb5, af6
+  SPI3_CS: pa4, output, pushpull
+  MTI_DRDY: pc7, input, pushpull
+
+
+
   # usart3
   USART3_RX: pd8, af7
   USART3_TX: pd9, af7
