@@ -62,7 +62,23 @@ private:
     Max31855 m_tcouple;
 };
 
+class IMUThread : public BaseStaticThread<1024> {
+public:
+    IMUThread() {}
+protected:
+    void main() override {
+        setName("imu");
+
+        while (true) {
+            palToggleLine(LINE_LED3);
+            chThdSleepMilliseconds(200);
+        }
+    }
+};
+
 static ThermocoupleThread thd_tcouple(Max31855(SPID1, spicfg));
+static IMUThread thd_imu = {};
+
 
 
 static uint8_t sdc_scratchpad[512];
@@ -100,6 +116,8 @@ int main() {
     }
 
     thd_tcouple.start(NORMALPRIO + 10);
+
+    thd_imu.start(NORMALPRIO+10);
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wmissing-noreturn"
