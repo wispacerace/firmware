@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.12) # ensure we're running on a modern CMake.
                                      # add the Kitware apt repository via the instructions at https://apt.kitware.com/
 
 ### ► set the project to build using the ARM gcc cross-compilation toolchain with Cortex-M4 specific options
-set(CMAKE_TOOLCHAIN_FILE "cmake/gcc_stm32f4.cmake")
+set(CMAKE_TOOLCHAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/cmake/gcc_stm32f4.cmake")
 
 ### Work around a GCC bug.
 # By default, CMake passes include directories for imported targets to the compiler as -isystem flags. However, all
