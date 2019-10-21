@@ -1,8 +1,8 @@
 #include <utility>
+#include <cstdio>
 
 #include "ch.hpp"
 #include "hal.h"
-#include "chprintf.h"
 
 #include "drivers/max31855.h"
 
@@ -32,7 +32,7 @@ static SPIConfig spicfg = {
     .cr2 = 0,
 };
 
-class ThermocoupleThread : public BaseStaticThread<512> {
+class ThermocoupleThread : public BaseStaticThread<1024> {
 public:
     ThermocoupleThread(Max31855 tcouple) : m_tcouple(std::move(tcouple)) {}
 protected:
@@ -44,13 +44,13 @@ protected:
         m_tcouple.start();
         while (true) {
             auto reading = m_tcouple.read();
-            chprintf((BaseSequentialStream*)&SD3, "faults: any short2vcc short2gnd open\n        %d   %d        %d       %d\n",
+            printf("faults: any short2vcc short2gnd open\n        %d   %d        %d       %d\n",
                 reading.fault_any(), reading.fault_short_vcc(), reading.fault_short_gnd(), reading.fault_open());
             auto itemp = reading.internal_temp();
             auto ttemp = reading.thermocouple_temp();
 
-            chprintf((BaseSequentialStream*)&SD3, "internal temp is: %f\n", itemp.value());
-            chprintf((BaseSequentialStream*)&SD3, "thermocouple temp is: %f\n", ttemp.value());
+            printf("internal temp is: %f\n", itemp.value());
+            printf("thermocouple temp is: %f\n", ttemp.value());
 
             palToggleLine(LINE_LED2);
             chThdSleepMilliseconds(200);
@@ -76,7 +76,7 @@ int main() {
 
     sdStart(&SD3, NULL); // serial driver 3 start default config
 
-    chprintf((BaseSequentialStream*)&SD3, "===== WISR FCU Booting up! =====\n");
+    printf("===== WISR FCU Booting up! =====\n");
 
     // start the independent watchdog timer (IWDG) built into STM32 chips.
     // this will reset the chip if it hasn't heard from our code in a while,
@@ -85,18 +85,18 @@ int main() {
 
     sdcStart(&SDCD1, &sdc_config);
 
-    chprintf((BaseSequentialStream*)&SD3, "[SDIO] Connecting... ");
+    printf("[SDIO] Connecting... ");
     if (sdcConnect(&SDCD1)) {
-        chprintf((BaseSequentialStream*)&SD3, "failed\r\n");
+        printf("failed\r\n");
     } else {
-        chprintf((BaseSequentialStream*)&SD3, "OK\r\n\r\nCard Info\r\n");
+        printf("OK\r\n\r\nCard Info\r\n");
         static const char *mode[] = {"SDV11", "SDV20", "MMC", NULL};
-        chprintf((BaseSequentialStream*)&SD3, "CSD      : %08X %8X %08X %08X \r\n",
+        printf("CSD      : %08X %8X %08X %08X \r\n",
                     SDCD1.csd[3], SDCD1.csd[2], SDCD1.csd[1], SDCD1.csd[0]);
-        chprintf((BaseSequentialStream*)&SD3, "CID      : %08X %8X %08X %08X \r\n",
+        printf("CID      : %08X %8X %08X %08X \r\n",
                     SDCD1.cid[3], SDCD1.cid[2], SDCD1.cid[1], SDCD1.cid[0]);
-        chprintf((BaseSequentialStream*)&SD3, "Mode     : %s\r\n", mode[SDCD1.cardmode & 3U]);
-        chprintf((BaseSequentialStream*)&SD3, "Capacity : %DMB\r\n", SDCD1.capacity / 2048);
+        printf("Mode     : %s\r\n", mode[SDCD1.cardmode & 3U]);
+        printf("Capacity : %DMB\r\n", SDCD1.capacity / 2048);
     }
 
     thd_tcouple.start(NORMALPRIO + 10);
