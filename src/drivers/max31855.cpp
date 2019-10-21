@@ -1,11 +1,11 @@
 #include <array>
 #include <algorithm>
+#include <cstdio>
 #include <boost/units/systems/temperature/celsius.hpp>
 #include <boost/units/systems/si.hpp>
 #include "util/impl_bit_cast.h"
 
 #include "max31855.h"
-#include "chprintf.h"
 
 using namespace boost::units;
 using namespace boost::units::si;
@@ -64,14 +64,14 @@ bool Max31855Reading::fault_open() const {
 
 quantity<absolute<celsius::temperature>, float> Max31855Reading::internal_temp() const {
 #ifdef MAX31855_DEBUG
-    chprintf((BaseSequentialStream*)&SD3, "[max31855] itemp extracted raw: %X from %X\n", (this->inner >> 4) & (0b111111111111), this->inner);
+    printf("[max31855] itemp extracted raw: %X from %X\n", (this->inner >> 4) & (0b111111111111), this->inner);
 #endif
 
     return demangle_temp_internal((this->inner >> 4) & (0b111111111111));
 }
 quantity<absolute<celsius::temperature>, float> Max31855Reading::thermocouple_temp() const {
 #ifdef MAX31855_DEBUG
-    chprintf((BaseSequentialStream*)&SD3, "[max31855] ttemp extracted raw: %X from %X\n", (this->inner >> 18), this->inner);
+    printf("[max31855] ttemp extracted raw: %X from %X\n", (this->inner >> 18), this->inner);
 #endif
 
     return demangle_temp_thermocouple(this->inner >> 18);
@@ -95,7 +95,7 @@ uint32_t Max31855::raw_spi_read() {
 #endif
 
 #ifdef MAX31855_DEBUG
-    chprintf((BaseSequentialStream*)&SD3, "[max31855] raw data: %x %x %x %x\n", data[0], data[1], data[2], data[3]);
+    printf("[max31855] raw data: %x %x %x %x\n", data[0], data[1], data[2], data[3]);
 #endif
 
     return data[0]<<24 | data[1] << 16 | data[2] << 8 | data[3] << 0;
