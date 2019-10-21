@@ -6,7 +6,7 @@
 
 #include <stdio.h>
 
-#define LFS_YES_TRACE
+// #define LFS_YES_TRACE
 
 #ifndef LFS_NO_ASSERT
 #include <assert.h>
