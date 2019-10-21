@@ -80,6 +80,9 @@ find_package(VendoredBoost)
 ### ► find littlefs
 set(Littlefs_ROOT "${PROJECT_SOURCE_DIR}/vendor/littlefs")
 find_package(Littlefs)
+target_compile_definitions(littlefs INTERFACE
+    -DLFS_CONFIG=${PROJECT_SOURCE_DIR}/src/cfg/lfs_util.h)
+target_sources(littlefs INTERFACE ${PROJECT_SOURCE_DIR}/src/cfg/lfs_util.c)
 
 ### ► link FCU target against other libraries we need
 target_link_libraries(fcu Boost::vendored littlefs)
@@ -103,8 +106,8 @@ target_include_directories(board-fcudev INTERFACE ${PROJECT_BINARY_DIR}/boards/f
 target_link_libraries(fcu board-fcudev)
 
 ### ► configure ChibiOS stack sizes and which linker script we use for the Flight Control Unit target
-set(CHIBIOS_MAIN_STACK_SIZE 0x400)
-set(CHIBIOS_PROCESS_STACK_SIZE 0x400)
+set(CHIBIOS_MAIN_STACK_SIZE 0x800)
+set(CHIBIOS_PROCESS_STACK_SIZE 0x800)
 set(MCU_LINKER_SCRIPT ${ChibiOS_ROOT}/os/common/startup/ARMCMx/compilers/GCC/ld/STM32F413xH.ld)
 set(MCU_LD_LIBRARY_PATH ${ChibiOS_ROOT}/os/common/startup/ARMCMx/compilers/GCC/ld)
 set_target_properties(fcu PROPERTIES LINK_DEPENDS ${MCU_LINKER_SCRIPT}) # make the FCU target depend on the linker script, so that if it changes it forces a rebuild
