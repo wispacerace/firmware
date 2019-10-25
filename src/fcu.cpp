@@ -3,6 +3,7 @@
 
 #include "ch.hpp"
 #include "hal.h"
+#include "sys/fault/handlers.h"
 
 #include "drivers/max31855.h"
 
