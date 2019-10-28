@@ -65,11 +65,8 @@ private:
 };
 
 
-static uint8_t sdc_scratchpad[512];
-static SDCConfig sdc_config = {
-    .scratchpad = sdc_scratchpad,
-};
-
+static FilesystemComponent fs(&SDCD1);
+static uint8_t file_buffer[SD_BLOCK_SIZE_HC];
 
 class SDThread : public BaseStaticThread<10000> {
 public:
@@ -77,24 +74,30 @@ public:
 protected:
     void main() override {
         setName("sd");
+        fs.start();
 
-        sdcStart(&SDCD1, &sdc_config);
+        // read current count
+        uint32_t boot_count = 0;
+        lfs_file_config file_cfg = {.buffer = &file_buffer};
+        lfs_file_t file;
+        int err = lfs_file_opencfg(&fs.lfs, &file, "boot_count", LFS_O_RDWR | LFS_O_CREAT, &file_cfg);
+        printf("lfs_file_open(): %i\n", err);
+        lfs_file_read(&fs.lfs, &file, &boot_count, sizeof(boot_count));
 
-        printf("[SDIO] Connecting... ");
-        if (sdcConnect(&SDCD1)) {
-            printf("failed\r\n");
-        } else {
-            printf("OK\r\n\r\nCard Info\r\n");
-            static const char *mode[] = {"SDV11", "SDV20", "MMC", NULL};
-            printf("CSD      : %08X %8X %08X %08X \r\n",
-                        SDCD1.csd[3], SDCD1.csd[2], SDCD1.csd[1], SDCD1.csd[0]);
-            printf("CID      : %08X %8X %08X %08X \r\n",
-                        SDCD1.cid[3], SDCD1.cid[2], SDCD1.cid[1], SDCD1.cid[0]);
-            printf("Mode     : %s\r\n", mode[SDCD1.cardmode & 3U]);
-            printf("Capacity : %DMB\r\n", SDCD1.capacity / 2048);
+        // update boot count
+        boot_count += 1;
+        lfs_file_rewind(&fs.lfs, &file);
+        lfs_file_write(&fs.lfs, &file, &boot_count, sizeof(boot_count));
 
-            init_fs(&SDCD1);
-        }
+
+        // remember the storage is not updated until the file is closed successfully
+        lfs_file_close(&fs.lfs, &file);
+
+        // release any resources we were using
+        lfs_unmount(&fs.lfs);
+
+        // print the boot count
+        printf("boot_count: %d\n", boot_count);
     }
 };
 

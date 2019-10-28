@@ -3,7 +3,7 @@
 #include "hal.h"
 #include "filesystem.h"
 
-static int sd_read_block(const struct lfs_config *c, lfs_block_t block,
+int sd_read_block(const struct lfs_config *c, lfs_block_t block,
         lfs_off_t off, void *buffer, lfs_size_t size) {
     int err = sdcRead(((lfs_bd_context*)c->context)->sdc,
         block, (uint8_t*)buffer, size/SD_BLOCK_SIZE_HC);
@@ -11,55 +11,51 @@ static int sd_read_block(const struct lfs_config *c, lfs_block_t block,
     return err;
 }
 
-static int sd_write_block(const struct lfs_config *c, lfs_block_t block,
+int sd_write_block(const struct lfs_config *c, lfs_block_t block,
         lfs_off_t off, const void *buffer, lfs_size_t size) {
     return sdcWrite(((lfs_bd_context*)c->context)->sdc,
         block, (uint8_t*)buffer, size/SD_BLOCK_SIZE_HC);
 }
 
-static int sd_erase_block(const struct lfs_config *c, lfs_block_t block) {
+int sd_erase_block(const struct lfs_config *c, lfs_block_t block) {
     return sdcErase(((lfs_bd_context*)c->context)->sdc,
         block, block+1);
 }
 
-static int sd_device_sync(const struct lfs_config *c) {
+int sd_device_sync(const struct lfs_config *c) {
     return sdcSync(((lfs_bd_context*)c->context)->sdc);
 }
 
-static struct lfs_config cfg = {0};
-static lfs_bd_context bd_context = {0};
-static lfs_t lfs;
-static uint8_t read_buf[SD_BLOCK_SIZE_HC] __attribute__((aligned(64)));
-static uint8_t write_buf[SD_BLOCK_SIZE_HC] __attribute__((aligned(64)));
-static uint8_t lookahead_buf[128] __attribute__((aligned(64)));
+int FilesystemComponent::start_sdio() {
+    // TODO: much nicer ways to handle errors
+    sdcStart(this->sdc, &this->sdc_config);
 
-static uint8_t file_buffer[SD_BLOCK_SIZE_HC];
+    printf("[SDIO] Connecting... ");
+    if (sdcConnect(&SDCD1)) {
+        printf("failed\r\n");
 
-void init_fs(SDCDriver *sdc) {
-    // TODO: assert SDC
-    // TODO: make all of this a class
+        return -1;
+    } else {
+        printf("OK\r\n\r\nCard Info\r\n");
+        static const char *mode[] = {"SDV11", "SDV20", "MMC", NULL};
+        printf("CSD      : %08X %8X %08X %08X \r\n",
+                    this->sdc->csd[3], this->sdc->csd[2], this->sdc->csd[1], this->sdc->csd[0]);
+        printf("CID      : %08X %8X %08X %08X \r\n",
+                    this->sdc->cid[3], this->sdc->cid[2], this->sdc->cid[1], this->sdc->cid[0]);
+        printf("Mode     : %s\r\n", mode[this->sdc->cardmode & 3U]);
+        printf("Capacity : %DMB\r\n", this->sdc->capacity / 2048);
 
-    bd_context.sdc = sdc;
+        return 0;
+    }
+}
 
-    cfg.context = &bd_context;
+void FilesystemComponent::start() {
+    if (this->start_sdio()) {
+        printf("error starting sdio!\n");
+        return;
+    }
 
-    cfg.read  = sd_read_block;
-    cfg.prog  = sd_write_block;
-    cfg.erase = sd_erase_block;
-    cfg.sync  = sd_device_sync;
-
-    cfg.read_size = SD_BLOCK_SIZE_HC;
-    cfg.prog_size = SD_BLOCK_SIZE_HC;
-    cfg.block_size = SD_BLOCK_SIZE_HC;
-    cfg.block_count = sdc->capacity/SD_BLOCK_SIZE_HC;
-
-    cfg.block_cycles = 1024;
-    cfg.cache_size = SD_BLOCK_SIZE_HC;
-    cfg.lookahead_size = 128;
-
-    cfg.read_buffer = &read_buf;
-    cfg.prog_buffer = &write_buf;
-    cfg.lookahead_buffer = &lookahead_buf;
+    cfg.block_count = this->sdc->capacity/cfg.block_size;
 
     // mount the filesystem
     int err = lfs_mount(&lfs, &cfg);
