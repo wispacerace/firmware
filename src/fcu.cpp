@@ -6,6 +6,7 @@
 #include "sys/fault/handlers.h"
 
 #include "drivers/max31855.h"
+#include "filesystem.h"
 
 using namespace chibios_rt;
 
@@ -63,13 +64,42 @@ private:
     Max31855 m_tcouple;
 };
 
-static ThermocoupleThread thd_tcouple(Max31855(SPID1, spicfg));
-
 
 static uint8_t sdc_scratchpad[512];
 static SDCConfig sdc_config = {
     .scratchpad = sdc_scratchpad,
 };
+
+
+class SDThread : public BaseStaticThread<10000> {
+public:
+    SDThread() {}
+protected:
+    void main() override {
+        setName("sd");
+
+        sdcStart(&SDCD1, &sdc_config);
+
+        printf("[SDIO] Connecting... ");
+        if (sdcConnect(&SDCD1)) {
+            printf("failed\r\n");
+        } else {
+            printf("OK\r\n\r\nCard Info\r\n");
+            static const char *mode[] = {"SDV11", "SDV20", "MMC", NULL};
+            printf("CSD      : %08X %8X %08X %08X \r\n",
+                        SDCD1.csd[3], SDCD1.csd[2], SDCD1.csd[1], SDCD1.csd[0]);
+            printf("CID      : %08X %8X %08X %08X \r\n",
+                        SDCD1.cid[3], SDCD1.cid[2], SDCD1.cid[1], SDCD1.cid[0]);
+            printf("Mode     : %s\r\n", mode[SDCD1.cardmode & 3U]);
+            printf("Capacity : %DMB\r\n", SDCD1.capacity / 2048);
+
+            init_fs();
+        }
+    }
+};
+
+static ThermocoupleThread thd_tcouple(Max31855(SPID1, spicfg));
+static SDThread thd_sd;
 
 int main() {
     halInit();
@@ -84,23 +114,9 @@ int main() {
     // which helps us recover from crashes where our code stops executing.
     wdgStart(&WDGD1, &wdg_config);
 
-    sdcStart(&SDCD1, &sdc_config);
+    thd_sd.start(NORMALPRIO-10);
 
-    printf("[SDIO] Connecting... ");
-    if (sdcConnect(&SDCD1)) {
-        printf("failed\r\n");
-    } else {
-        printf("OK\r\n\r\nCard Info\r\n");
-        static const char *mode[] = {"SDV11", "SDV20", "MMC", NULL};
-        printf("CSD      : %08X %8X %08X %08X \r\n",
-                    SDCD1.csd[3], SDCD1.csd[2], SDCD1.csd[1], SDCD1.csd[0]);
-        printf("CID      : %08X %8X %08X %08X \r\n",
-                    SDCD1.cid[3], SDCD1.cid[2], SDCD1.cid[1], SDCD1.cid[0]);
-        printf("Mode     : %s\r\n", mode[SDCD1.cardmode & 3U]);
-        printf("Capacity : %DMB\r\n", SDCD1.capacity / 2048);
-    }
-
-    thd_tcouple.start(NORMALPRIO + 10);
+    // thd_tcouple.start(NORMALPRIO + 10);
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wmissing-noreturn"
