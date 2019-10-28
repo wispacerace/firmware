@@ -5,33 +5,43 @@
 
 static int sd_read_block(const struct lfs_config *c, lfs_block_t block,
         lfs_off_t off, void *buffer, lfs_size_t size) {
-    int err = sdcRead(&SDCD1, block, (uint8_t*)buffer, size/SD_BLOCK_SIZE_HC);
+    int err = sdcRead(((lfs_bd_context*)c->context)->sdc,
+        block, (uint8_t*)buffer, size/SD_BLOCK_SIZE_HC);
 
     return err;
 }
 
 static int sd_write_block(const struct lfs_config *c, lfs_block_t block,
         lfs_off_t off, const void *buffer, lfs_size_t size) {
-    return sdcWrite(&SDCD1, block, (uint8_t*)buffer, size/SD_BLOCK_SIZE_HC);
+    return sdcWrite(((lfs_bd_context*)c->context)->sdc,
+        block, (uint8_t*)buffer, size/SD_BLOCK_SIZE_HC);
 }
 
 static int sd_erase_block(const struct lfs_config *c, lfs_block_t block) {
-    return sdcErase(&SDCD1, block, block+1);
+    return sdcErase(((lfs_bd_context*)c->context)->sdc,
+        block, block+1);
 }
 
 static int sd_device_sync(const struct lfs_config *c) {
-    return sdcSync(&SDCD1);
+    return sdcSync(((lfs_bd_context*)c->context)->sdc);
 }
 
 static struct lfs_config cfg = {0};
+static lfs_bd_context bd_context = {0};
 static lfs_t lfs;
 static uint8_t read_buf[SD_BLOCK_SIZE_HC] __attribute__((aligned(64)));
 static uint8_t write_buf[SD_BLOCK_SIZE_HC] __attribute__((aligned(64)));
 static uint8_t lookahead_buf[128] __attribute__((aligned(64)));
 
-void init_fs() {
+static uint8_t file_buffer[SD_BLOCK_SIZE_HC];
+
+void init_fs(SDCDriver *sdc) {
     // TODO: assert SDC
     // TODO: make all of this a class
+
+    bd_context.sdc = sdc;
+
+    cfg.context = &bd_context;
 
     cfg.read  = sd_read_block;
     cfg.prog  = sd_write_block;
@@ -41,7 +51,7 @@ void init_fs() {
     cfg.read_size = SD_BLOCK_SIZE_HC;
     cfg.prog_size = SD_BLOCK_SIZE_HC;
     cfg.block_size = SD_BLOCK_SIZE_HC;
-    cfg.block_count = SDCD1.capacity/SD_BLOCK_SIZE_HC;
+    cfg.block_count = sdc->capacity/SD_BLOCK_SIZE_HC;
 
     cfg.block_cycles = 1024;
     cfg.cache_size = SD_BLOCK_SIZE_HC;

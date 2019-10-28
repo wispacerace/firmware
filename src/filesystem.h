@@ -5,4 +5,7 @@
 
 #include "lfs.h"
 
-void init_fs();
+typedef struct lfs_bd_context {
+	SDCDriver *sdc;
+} lfs_context;
+void init_fs(SDCDriver *sdc);

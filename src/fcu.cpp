@@ -93,7 +93,7 @@ protected:
             printf("Mode     : %s\r\n", mode[SDCD1.cardmode & 3U]);
             printf("Capacity : %DMB\r\n", SDCD1.capacity / 2048);
 
-            init_fs();
+            init_fs(&SDCD1);
         }
     }
 };
