@@ -54,8 +54,10 @@ check_ipo_supported(RESULT is_ipo_supported)
 add_compile_options(-fdiagnostics-color=always)
 
 ### ► add the Flight Control Unit firmware as an executable target
-add_executable(fcu src/fcu.cpp src/drivers/max31855.cpp
-    src/sys/syscalls.c src/sys/fault/fault_handlers_v7m.c src/sys/fault/hardfault_handler_v7m.s)
+add_executable(fcu src/fcu.cpp src/drivers/max31855.cpp src/filesystem.cpp
+    src/sys/syscalls.c
+    src/sys/fault/fault_handlers_v7m.c src/sys/fault/hardfault_handler_v7m.s
+    )
 set_target_properties(fcu PROPERTIES SUFFIX ".elf")
 target_include_directories(fcu PRIVATE src/ src/cfg/)
 
@@ -77,8 +79,15 @@ target_link_libraries(fcu
 set(VendoredBoost_ROOT "${PROJECT_SOURCE_DIR}/vendor/boost")
 find_package(VendoredBoost)
 
+### ► find littlefs
+set(Littlefs_ROOT "${PROJECT_SOURCE_DIR}/vendor/littlefs")
+find_package(Littlefs)
+target_compile_definitions(littlefs INTERFACE
+    -DLFS_CONFIG=${PROJECT_SOURCE_DIR}/src/cfg/lfs_util.h)
+target_sources(littlefs INTERFACE ${PROJECT_SOURCE_DIR}/src/cfg/lfs_util.c)
+
 ### ► link FCU target against other libraries we need
-target_link_libraries(fcu Boost::vendored)
+target_link_libraries(fcu Boost::vendored littlefs)
 
 ### ► enable link-time optimization on the Flight Control Unit target
 if(is_ipo_supported)
@@ -99,8 +108,8 @@ target_include_directories(board-fcudev INTERFACE ${PROJECT_BINARY_DIR}/boards/f
 target_link_libraries(fcu board-fcudev)
 
 ### ► configure ChibiOS stack sizes and which linker script we use for the Flight Control Unit target
-set(CHIBIOS_MAIN_STACK_SIZE 0x400)
-set(CHIBIOS_PROCESS_STACK_SIZE 0x400)
+set(CHIBIOS_MAIN_STACK_SIZE 0x800)
+set(CHIBIOS_PROCESS_STACK_SIZE 0x800)
 set(MCU_LINKER_SCRIPT ${ChibiOS_ROOT}/os/common/startup/ARMCMx/compilers/GCC/ld/STM32F413xH.ld)
 set(MCU_LD_LIBRARY_PATH ${ChibiOS_ROOT}/os/common/startup/ARMCMx/compilers/GCC/ld)
 set_target_properties(fcu PROPERTIES LINK_DEPENDS ${MCU_LINKER_SCRIPT}) # make the FCU target depend on the linker script, so that if it changes it forces a rebuild
