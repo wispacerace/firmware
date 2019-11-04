@@ -49,16 +49,17 @@ int FilesystemComponent::start_sdio() {
     }
 }
 
-void FilesystemComponent::start() {
-    if (this->start_sdio()) {
+int FilesystemComponent::start() {
+    int err = this->start_sdio();
+    if (err) {
         printf("error starting sdio!\n");
-        return;
+        return err;
     }
 
     cfg.block_count = this->sdc->capacity/cfg.block_size;
 
     // mount the filesystem
-    int err = lfs_mount(&lfs, &cfg);
+    err = lfs_mount(&lfs, &cfg);
     printf("lfs_mount(): %i\n", err);
 
     // reformat if we can't mount the filesystem
@@ -69,4 +70,6 @@ void FilesystemComponent::start() {
         err = lfs_mount(&lfs, &cfg);
         printf("lfs_mount(): %i\n", err);
     }
+
+    return 0;
 }

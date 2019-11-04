@@ -27,7 +27,7 @@ public:
         cfg.context = &this->bd_context;
     }
 
-    void start();
+    int start();
 
     lfs_t lfs = {0};
 

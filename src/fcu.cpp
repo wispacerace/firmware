@@ -74,7 +74,10 @@ public:
 protected:
     void main() override {
         setName("sd");
-        fs.start();
+        if (fs.start()) {
+            return;
+        }
+
 
         // read current count
         uint32_t boot_count = 0;
