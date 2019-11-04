@@ -6,7 +6,9 @@
 #include "sys/fault/handlers.h"
 
 #include "drivers/max31855.h"
+#include "drivers/mti.h"
 #include "filesystem.h"
+#include "threads/imu.h"
 
 using namespace chibios_rt;
 
@@ -26,7 +28,7 @@ static WDGConfig wdg_config = {
 
 
 
-static SPIConfig spicfg = {
+static SPIConfig spicfg_tcouple_amp = {
     .circular = false,
     .end_cb = NULL,
     .ssline = LINE_SPI1_CS,
@@ -38,8 +40,6 @@ class ThermocoupleThread : public BaseStaticThread<1024> {
 public:
     ThermocoupleThread(Max31855 tcouple) : m_tcouple(std::move(tcouple)) {}
 protected:
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wmissing-noreturn"
     void main() override {
         setName("tcouple");
 
@@ -58,7 +58,6 @@ protected:
             chThdSleepMilliseconds(200);
         }
     }
-#pragma clang diagnostic pop
 
 private:
     Max31855 m_tcouple;
@@ -104,8 +103,9 @@ protected:
     }
 };
 
-static ThermocoupleThread thd_tcouple(Max31855(SPID1, spicfg));
+static ThermocoupleThread thd_tcouple(Max31855(SPID1, spicfg_tcouple_amp));
 static SDThread thd_sd;
+static IMUThread thd_imu(MtiIMU {});
 
 int main() {
     halInit();
@@ -120,9 +120,9 @@ int main() {
     // which helps us recover from crashes where our code stops executing.
     wdgStart(&WDGD1, &wdg_config);
 
-    thd_sd.start(NORMALPRIO-10);
-
+    // thd_sd.start(NORMALPRIO+10);
     // thd_tcouple.start(NORMALPRIO + 10);
+    thd_imu.start(NORMALPRIO+10);
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wmissing-noreturn"

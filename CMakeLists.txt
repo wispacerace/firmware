@@ -54,7 +54,11 @@ check_ipo_supported(RESULT is_ipo_supported)
 add_compile_options(-fdiagnostics-color=always)
 
 ### ► add the Flight Control Unit firmware as an executable target
-add_executable(fcu src/fcu.cpp src/drivers/max31855.cpp src/filesystem.cpp
+add_executable(fcu src/fcu.cpp
+    src/drivers/max31855.cpp
+    src/drivers/mti.cpp
+    src/threads/imu.cpp
+    src/filesystem.cpp
     src/sys/syscalls.c
     src/sys/fault/fault_handlers_v7m.c src/sys/fault/hardfault_handler_v7m.s
     )
