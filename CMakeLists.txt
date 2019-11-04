@@ -100,6 +100,7 @@ if (TESTS)
 else()
     ### ► add the Flight Control Unit firmware as an executable target
     add_executable(fcu src/fcu.cpp
+        src/drivers/mti.cpp
 
         src/filesystem.cpp
 

@@ -5,7 +5,10 @@
 #include "hal.h"
 #include "sys/fault/handlers.h"
 
+#include "drivers/mti.h"
+#include "filesystem.h"
 #include "threads/sd.h"
+#include "threads/imu.h"
 
 using namespace chibios_rt;
 
@@ -22,6 +25,7 @@ static WDGConfig wdg_config = {
 };
 
 static SDThread thd_sd;
+static IMUThread thd_imu(MtiIMU {});
 
 int main() {
     halInit();
@@ -37,6 +41,7 @@ int main() {
     wdgStart(&WDGD1, &wdg_config);
 
     thd_sd.start(NORMALPRIO - 10);
+    thd_imu.start(NORMALPRIO+10);
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wmissing-noreturn"
