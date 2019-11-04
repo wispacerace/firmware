@@ -7,6 +7,7 @@ other:
   STM32_HSE_BYPASS: ~
 default: input, pushpull, starthigh, pullup, highspeed
 pins:
+  # thermocouple amp (max31855)
   SPI1_SCK: pa5, af5
   SPI1_MISO: pa6, af5
   SPI1_MOSI: pa7, af5
@@ -32,3 +33,10 @@ pins:
   SDIO_D3: pc11, af12
   SDIO_CLK: pc12, af12
   SDIO_CMD: pd2, af12
+
+  # xsens mti-3 imu
+  SPI3_SCK: pb3, af6
+  SPI3_MISO: pb4, af6
+  SPI3_MOSI: pb5, af6
+  SPI3_CS: pa4, output, pushpull
+  MTI_DRDY: pc7, input, pushpull
