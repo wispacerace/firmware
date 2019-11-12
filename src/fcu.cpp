@@ -24,8 +24,16 @@ static WDGConfig wdg_config = {
     .rlr = STM32_IWDG_RL(1000),
 };
 
+static SPIConfig spicfg_imu = {
+    .circular = false,
+    .end_cb = NULL,
+    .ssline = LINE_SPI3_CS,
+    .cr1 = SPI_CR1_BR_1,
+    .cr2 = 0,
+};
+
 static SDThread thd_sd;
-static IMUThread thd_imu(MtiIMU {});
+static IMUThread thd_imu(MtiIMU(SPID3, spicfg_imu));
 
 int main() {
     halInit();
