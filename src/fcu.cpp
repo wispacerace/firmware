@@ -36,6 +36,14 @@ static SPIConfig spicfg_tcouple_amp = {
     .cr2 = 0,
 };
 
+static SPIConfig spicfg_imu = {
+    .circular = false,
+    .end_cb = NULL,
+    .ssline = LINE_SPI3_CS,
+    .cr1 = SPI_CR1_BR_1,
+    .cr2 = 0,
+};
+
 class ThermocoupleThread : public BaseStaticThread<1024> {
 public:
     ThermocoupleThread(Max31855 tcouple) : m_tcouple(std::move(tcouple)) {}
@@ -105,7 +113,7 @@ protected:
 
 static ThermocoupleThread thd_tcouple(Max31855(SPID1, spicfg_tcouple_amp));
 static SDThread thd_sd;
-static IMUThread thd_imu(MtiIMU {});
+static IMUThread thd_imu(MtiIMU(SPID3, spicfg_imu));
 
 int main() {
     halInit();
