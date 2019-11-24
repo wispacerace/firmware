@@ -77,30 +77,6 @@ protected:
         if (fs.start()) {
             return;
         }
-
-
-        // read current count
-        uint32_t boot_count = 0;
-        lfs_file_config file_cfg = {.buffer = &file_buffer};
-        lfs_file_t file;
-        int err = lfs_file_opencfg(&fs.lfs, &file, "boot_count", LFS_O_RDWR | LFS_O_CREAT, &file_cfg);
-        printf("lfs_file_open(): %i\n", err);
-        lfs_file_read(&fs.lfs, &file, &boot_count, sizeof(boot_count));
-
-        // update boot count
-        boot_count += 1;
-        lfs_file_rewind(&fs.lfs, &file);
-        lfs_file_write(&fs.lfs, &file, &boot_count, sizeof(boot_count));
-
-
-        // remember the storage is not updated until the file is closed successfully
-        lfs_file_close(&fs.lfs, &file);
-
-        // release any resources we were using
-        lfs_unmount(&fs.lfs);
-
-        // print the boot count
-        printf("boot_count: %d\n", boot_count);
     }
 };
 
