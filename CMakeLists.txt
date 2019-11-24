@@ -79,15 +79,8 @@ target_link_libraries(fcu
 set(VendoredBoost_ROOT "${PROJECT_SOURCE_DIR}/vendor/boost")
 find_package(VendoredBoost)
 
-### ► find littlefs
-set(Littlefs_ROOT "${PROJECT_SOURCE_DIR}/vendor/littlefs")
-find_package(Littlefs)
-target_compile_definitions(littlefs INTERFACE
-    -DLFS_CONFIG=${PROJECT_SOURCE_DIR}/src/cfg/lfs_util.h)
-target_sources(littlefs INTERFACE ${PROJECT_SOURCE_DIR}/src/cfg/lfs_util.c)
-
 ### ► link FCU target against other libraries we need
-target_link_libraries(fcu Boost::vendored littlefs)
+target_link_libraries(fcu Boost::vendored)
 
 ### ► enable link-time optimization on the Flight Control Unit target
 if(is_ipo_supported)
