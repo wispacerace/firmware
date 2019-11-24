@@ -65,23 +65,26 @@ private:
 };
 
 
-static FilesystemComponent fs(&SDCD1);
-static uint8_t file_buffer[SD_BLOCK_SIZE_HC];
 
-class SDThread : public BaseStaticThread<10000> {
+class SDThread : public BaseStaticThread<4096> {
 public:
-    SDThread() {}
+    SDThread(FilesystemComponent fs) : m_fs(std::move(fs)) {}
 protected:
     void main() override {
         setName("sd");
-        if (fs.start()) {
+        if (m_fs.start()) {
             return;
         }
     }
+
+private:
+    FilesystemComponent m_fs;
 };
 
-static ThermocoupleThread thd_tcouple(Max31855(SPID1, spicfg));
-static SDThread thd_sd;
+static ThermocoupleThread thd_tcouple(
+    std::move(Max31855(SPID1, spicfg)));
+static SDThread thd_sd(
+    std::move(FilesystemComponent(SDCD1)));
 
 int main() {
     halInit();
@@ -97,8 +100,6 @@ int main() {
     wdgStart(&WDGD1, &wdg_config);
 
     thd_sd.start(NORMALPRIO-10);
-
-    // thd_tcouple.start(NORMALPRIO + 10);
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wmissing-noreturn"

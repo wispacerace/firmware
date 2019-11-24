@@ -5,8 +5,7 @@
 
 class FilesystemComponent {
 public:
-    FilesystemComponent(SDCDriver *sdc) : sdc(sdc) {
-    }
+    FilesystemComponent(SDCDriver &sdc) : sdc(sdc) {}
 
     int start();
 
