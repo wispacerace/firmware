@@ -68,7 +68,7 @@ private:
 
 class SDThread : public BaseStaticThread<4096> {
 public:
-    SDThread(FilesystemComponent fs) : m_fs(std::move(fs)) {}
+    SDThread() {}
 protected:
     void main() override {
         setName("sd");
@@ -83,8 +83,7 @@ private:
 
 static ThermocoupleThread thd_tcouple(
     std::move(Max31855(SPID1, spicfg)));
-static SDThread thd_sd(
-    std::move(FilesystemComponent(SDCD1)));
+static SDThread thd_sd;
 
 int main() {
     halInit();
