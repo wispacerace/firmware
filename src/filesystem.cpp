@@ -1,6 +1,4 @@
 #include <cstdio>
-#include "ch.h"
-#include "hal.h"
 #include "filesystem.h"
 
 int FilesystemComponent::start_sdio() {

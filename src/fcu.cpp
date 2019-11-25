@@ -5,7 +5,7 @@
 #include "hal.h"
 #include "sys/fault/handlers.h"
 
-#include "filesystem.h"
+#include "threads/sd.h"
 
 using namespace chibios_rt;
 
@@ -21,21 +21,6 @@ static WDGConfig wdg_config = {
     .pr = STM32_IWDG_PR_32,
     // threshold (IWDG_RLR), the counter value that causes a chip reset
     .rlr = STM32_IWDG_RL(1000),
-};
-
-class SDThread : public BaseStaticThread<4096> {
-public:
-    SDThread() {}
-protected:
-    void main() override {
-        setName("sd");
-        if (m_fs.start()) {
-            return;
-        }
-    }
-
-private:
-    FilesystemComponent m_fs;
 };
 
 static SDThread thd_sd;

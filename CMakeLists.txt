@@ -58,6 +58,8 @@ add_executable(fcu src/fcu.cpp
 
     src/filesystem.cpp
 
+    src/threads/sd.cpp
+
     src/sys/syscalls.c
     src/sys/fault/fault_handlers_v7m.c src/sys/fault/hardfault_handler_v7m.s
     src/sys/filesystem/fatfs_diskio.c src/sys/filesystem/fatfs_syscall.c

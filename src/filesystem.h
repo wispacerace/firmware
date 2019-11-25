@@ -1,6 +1,7 @@
 #pragma once
-#include "ch.h"
-#include "ff.h" // FatFS, via elm-chan (an industry standard FAT driver)
+#include <ch.h>
+#include <hal.h>
+#include <ff.h> // FatFS, via elm-chan (an industry standard FAT driver)
 #include "ffconf.h"
 
 #define SD_BLOCK_SIZE_HC 512
