@@ -55,7 +55,6 @@ add_compile_options(-fdiagnostics-color=always)
 
 ### ► add the Flight Control Unit firmware as an executable target
 add_executable(fcu src/fcu.cpp
-    src/drivers/max31855.cpp
 
     src/filesystem.cpp
 
