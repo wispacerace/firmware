@@ -65,46 +65,24 @@ private:
 };
 
 
-static FilesystemComponent fs(&SDCD1);
-static uint8_t file_buffer[SD_BLOCK_SIZE_HC];
 
-class SDThread : public BaseStaticThread<10000> {
+class SDThread : public BaseStaticThread<4096> {
 public:
     SDThread() {}
 protected:
     void main() override {
         setName("sd");
-        if (fs.start()) {
+        if (m_fs.start()) {
             return;
         }
-
-
-        // read current count
-        uint32_t boot_count = 0;
-        lfs_file_config file_cfg = {.buffer = &file_buffer};
-        lfs_file_t file;
-        int err = lfs_file_opencfg(&fs.lfs, &file, "boot_count", LFS_O_RDWR | LFS_O_CREAT, &file_cfg);
-        printf("lfs_file_open(): %i\n", err);
-        lfs_file_read(&fs.lfs, &file, &boot_count, sizeof(boot_count));
-
-        // update boot count
-        boot_count += 1;
-        lfs_file_rewind(&fs.lfs, &file);
-        lfs_file_write(&fs.lfs, &file, &boot_count, sizeof(boot_count));
-
-
-        // remember the storage is not updated until the file is closed successfully
-        lfs_file_close(&fs.lfs, &file);
-
-        // release any resources we were using
-        lfs_unmount(&fs.lfs);
-
-        // print the boot count
-        printf("boot_count: %d\n", boot_count);
     }
+
+private:
+    FilesystemComponent m_fs;
 };
 
-static ThermocoupleThread thd_tcouple(Max31855(SPID1, spicfg));
+static ThermocoupleThread thd_tcouple(
+    std::move(Max31855(SPID1, spicfg)));
 static SDThread thd_sd;
 
 int main() {
@@ -121,8 +99,6 @@ int main() {
     wdgStart(&WDGD1, &wdg_config);
 
     thd_sd.start(NORMALPRIO-10);
-
-    // thd_tcouple.start(NORMALPRIO + 10);
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wmissing-noreturn"

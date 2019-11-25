@@ -54,9 +54,14 @@ check_ipo_supported(RESULT is_ipo_supported)
 add_compile_options(-fdiagnostics-color=always)
 
 ### ► add the Flight Control Unit firmware as an executable target
-add_executable(fcu src/fcu.cpp src/drivers/max31855.cpp src/filesystem.cpp
+add_executable(fcu src/fcu.cpp
+    src/drivers/max31855.cpp
+
+    src/filesystem.cpp
+
     src/sys/syscalls.c
     src/sys/fault/fault_handlers_v7m.c src/sys/fault/hardfault_handler_v7m.s
+    src/sys/filesystem/fatfs_diskio.c src/sys/filesystem/fatfs_syscall.c
     )
 set_target_properties(fcu PROPERTIES SUFFIX ".elf")
 target_include_directories(fcu PRIVATE src/ src/cfg/)
@@ -79,15 +84,13 @@ target_link_libraries(fcu
 set(VendoredBoost_ROOT "${PROJECT_SOURCE_DIR}/vendor/boost")
 find_package(VendoredBoost)
 
-### ► find littlefs
-set(Littlefs_ROOT "${PROJECT_SOURCE_DIR}/vendor/littlefs")
-find_package(Littlefs)
-target_compile_definitions(littlefs INTERFACE
-    -DLFS_CONFIG=${PROJECT_SOURCE_DIR}/src/cfg/lfs_util.h)
-target_sources(littlefs INTERFACE ${PROJECT_SOURCE_DIR}/src/cfg/lfs_util.c)
+### ► find vendored Elmchan FatFS (via ChibiOS patched version in ChibiOS/ext)
+set(FatFs_ROOT "${PROJECT_SOURCE_DIR}/vendor/fatfs")
+set(FatFs_CONFIGDIR "${PROJECT_SOURCE_DIR}/src/cfg/")
+find_package(FatFs)
 
 ### ► link FCU target against other libraries we need
-target_link_libraries(fcu Boost::vendored littlefs)
+target_link_libraries(fcu Boost::vendored FatFs)
 
 ### ► enable link-time optimization on the Flight Control Unit target
 if(is_ipo_supported)
