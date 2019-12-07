@@ -1,6 +1,7 @@
 #pragma once
-#include "ch.h"
-#include "hal.h"
+
+#include <ch.h>
+#include <hal.h>
 
 // NOTE: this must be the only thing on the given SPIDriver
 // unlike max31855, we make no effort to restart or acquire the bus,
@@ -12,7 +13,6 @@ public:
           m_spi_config(spi_config) {}
 
     void start();
-    void test_exchange();
 
 private:
     SPIDriver &m_spi_driver;

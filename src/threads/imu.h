@@ -1,7 +1,8 @@
 #pragma once
 #include <utility>
 
-#include "ch.hpp"
+#include <ch.hpp>
+
 #include "drivers/mti.h"
 
 using namespace chibios_rt;

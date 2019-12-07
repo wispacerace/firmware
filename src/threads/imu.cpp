@@ -6,7 +6,6 @@ void IMUThread::main() {
     setName("imu");
 
     m_imu.start();
-    m_imu.test_exchange();
 
     while (true) {
         palToggleLine(LINE_LED3);
