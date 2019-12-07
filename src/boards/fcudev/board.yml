@@ -40,3 +40,4 @@ pins:
   SPI3_MOSI: pb5, af6
   SPI3_CS: pa4, output, pushpull
   MTI_DRDY: pc7, input, pushpull
+  MTI_NRST: pf12, output, opendrain, startlow
