@@ -72,6 +72,9 @@ find_package(FatFs)
 set(PID_ROOT "${PROJECT_SOURCE_DIR}/vendor/PID")
 find_package(PID)
 
+### ► Xbus de/serialization library
+add_subdirectory(vendor/xbus)
+
 ### ► generate board target
 add_library(board-fcudev INTERFACE)
 file(MAKE_DIRECTORY "${PROJECT_BINARY_DIR}/boards/fcudev") # make sure to create the folder that we put the output header in
