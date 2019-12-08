@@ -3,11 +3,9 @@
 #include "servo.h"
 
 pwmcnt_t degreesToTicks(PWMDriver *driver, int angle) {
-	/*
-	 * 3600 degrees represent a whole period
-	 * Conversion is servo_width = pwm_width * 3 / 2 / 20
-	 */
-	return PWM_FRACTION_TO_WIDTH(driver, 3600, angle * 15 / 20);
+	/* 180 is degrees spread across 900 to 2100 microseconds */
+	return (PWM_FRACTION_TO_WIDTH(driver, 20000, 900) +
+	        PWM_FRACTION_TO_WIDTH(driver, 20000, angle * 1200 / 180));
 }
 
 Servo::Servo(PWMDriver *drv, pwmchannel_t chnl) {
