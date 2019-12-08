@@ -5,6 +5,7 @@
 #include "hal.h"
 #include "sys/fault/handlers.h"
 
+#include "drivers/servo.h"
 #include "threads/sd.h"
 
 using namespace chibios_rt;
@@ -25,6 +26,21 @@ static WDGConfig wdg_config = {
 
 static SDThread thd_sd;
 
+static PWMConfig pwm_config = {
+    10000, // 10kHz,
+    200,
+    NULL,
+    {
+        {PWM_OUTPUT_DISABLED,    NULL},
+        {PWM_OUTPUT_DISABLED,    NULL},
+        {PWM_OUTPUT_DISABLED,    NULL},
+        {PWM_OUTPUT_ACTIVE_HIGH, NULL},
+    },
+    0,
+    0,
+};
+static Servo servo(&PWMD4, 3); // PD15
+
 int main() {
     halInit();
     System::init();
@@ -39,6 +55,11 @@ int main() {
     wdgStart(&WDGD1, &wdg_config);
 
     thd_sd.start(NORMALPRIO-10);
+    
+    pwmStart(&PWMD4, &pwm_config);
+    // pwmEnableChannel(&PWMD4, 3, PWM_PERCENTAGE_TO_WIDTH(&PWMD4, 5000));
+
+    int angle = 0;
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wmissing-noreturn"
@@ -50,7 +71,12 @@ int main() {
         palToggleLine(LINE_LED1);
         // wait for .5s every iteration of the main thread loop.
         // other threads will run in this time, obviously.
-        chThdSleepMilliseconds(500);
+        chThdSleepMilliseconds(10);
+
+        angle++;
+        servo.write(angle);
+        if (angle >= 180)
+            angle = 0;
     }
 #pragma clang diagnostic pop
 }

@@ -1,9 +1,12 @@
+#pragma once
+
 #include "ch.h"
 #include "hal.h"
 
 class Servo {
 public:
 	Servo(PWMDriver *drv, pwmchannel_t chnl);
+	void start();
 	int read();
 	void write(int angle);
 private:

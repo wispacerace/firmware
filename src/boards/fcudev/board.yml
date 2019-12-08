@@ -32,3 +32,5 @@ pins:
   SDIO_D3: pc11, af12
   SDIO_CLK: pc12, af12
   SDIO_CMD: pd2, af12
+
+  TEST_SERVO: pd15, af2, pushpull, startlow
