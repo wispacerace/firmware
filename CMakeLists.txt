@@ -90,8 +90,11 @@ set(FatFs_ROOT "${PROJECT_SOURCE_DIR}/vendor/fatfs")
 set(FatFs_CONFIGDIR "${PROJECT_SOURCE_DIR}/src/cfg/")
 find_package(FatFs)
 
+### ► br3ttb/PID library, ported away from Arduino
+add_subdirectory(vendor/PID)
+
 ### ► link FCU target against other libraries we need
-target_link_libraries(fcu Boost::vendored FatFs)
+target_link_libraries(fcu Boost::vendored FatFs PID)
 
 ### ► enable link-time optimization on the Flight Control Unit target
 if(is_ipo_supported)
