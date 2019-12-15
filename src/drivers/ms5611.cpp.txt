@@ -1,0 +1,45 @@
+/*
+ * Driver for MS5611-01BA03 Barometric Pressure Sensor controlled
+ * via SPI.
+ */
+ 
+#include ms5611.h
+#include "chprintf.h"
+ 
+#ifndef HAL_USE_I2C
+#warning HAL_USE_I2C must be enabled to use this driver
+#endif
+
+void mpl115a::start() {
+	this->i2c_cfg = {
+		OPMODE_I2C,
+		5250,
+		STD_DUTY_CYCLE,
+	};
+#ifdef I2C_USE_MUTUAL_EXCLUSION
+	i2cAcquireBus(&this->i2c_d);
+#endif
+	i2cStart(&this->i2c_d, &this->i2c_cfg);
+#ifdef I2C_USE_MUTUAL_EXCLUSION
+	i2cReleaseBus(&this->i2c_d);
+#endif
+}
+
+// Temperature Compensated Pressure
+int32_t calc_tempCompPressure(){
+    
+}
+
+// Temperature
+int32_t calc_temp(){
+    
+}
+
+// Second Order Temperature Compensation
+int32_t calc_secondTempComp(){
+    
+}
+
+int32_t ms5611::read_altitude(){
+    
+}

@@ -1,0 +1,58 @@
+/*
+ * Header file for MS5611-01BA03 Barometric Pressure Sensor.
+ */
+ #include "ch.h"
+ #include "hal.h"
+
+
+
+class ms5611 {
+public:
+    ms5611();
+    void start();
+    int32_t read_altitude()
+private:
+    I2CDriver i2c_d;
+	I2CConfig i2c_cfg;
+    int32_t calc_temp();
+    int32_t calc_tempCompPressure();
+    int32_t calc_secondTempComp();
+    /*
+    Read calibration data (factory calibrated) from PROM
+    C1 - Pressure Sensitivity - SENS
+    C2 - Pressure Offset - OFF
+    C3 - Temperature coefficient of pressure sensitivity -TCS
+    C4 - Temperature coefficient of pressure offset - TCO
+    C5 - Reference temperature - TCO
+    C6 - Temperature coefficient of the temperature - TEMPSENS
+    Read digital pressure and temperature data
+    D1 - Digital pressure value 
+    D2 - Digital temperature value 
+    
+    Calculate temperature - calc_temp()
+    Difference between actual and reference temperature
+        dT = D2 - T = D2 - (C5 * 2^8)
+    Actual temperature (-40…85°C with 0.01°C resolution)
+        TEMP = 20C + dT * TEMPSENS = 2000 + dT * C6 / 2^23
+        
+    Calculate temperature compensated pressure - calc_tempCompPressure()
+    Offset at actual temperature
+        OFF = OFF + TCO * dT = C2 * 2^16 + (C4 * dT )/ 2^7
+    Sensitivity at actual temperature 
+        SENS = SENS + TCS * dT = C1 * 2^15 + (C3 * dT )/ 2^8
+    Temperature compensated pressure (10…1200mbar with 0.01mbar resolution)
+        P = D1 * SENS - OFF = (D1 * SENS / 2^21 - OFF) / 2^15
+        
+    SECOND ORDER TEMPERATURE COMPENSATION
+    if(TEMP < 20C)
+        
+        if(TEMP < -15C)
+            
+        else
+            
+    else
+        T2 = 0; OFF2 = 0; SENS2 = 0;
+    */
+};
+    
+    
