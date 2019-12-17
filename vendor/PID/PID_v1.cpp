@@ -6,8 +6,11 @@
  **********************************************************************************************/
 
 #include <PID_v1.h>
+#include <ch.h>
 
-extern unsigned long millis(void);
+unsigned long millis(void) {
+    return TIME_I2MS(chVTGetSystemTimeX());
+}
 
 /*Constructor (...)*********************************************************
  *    The parameters specified here are those for for which we can't set up

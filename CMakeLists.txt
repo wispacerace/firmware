@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.12) # ensure we're running on a modern CMake.
                                      # sorry, Ubuntu and/or Debian users! to get a recent version of CMake,
                                      # add the Kitware apt repository via the instructions at https://apt.kitware.com/
+cmake_policy(SET CMP0079 NEW)
 
 ### ► set the project to build using the ARM gcc cross-compilation toolchain with Cortex-M4 specific options
 set(CMAKE_TOOLCHAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/cmake/gcc_stm32f4.cmake")
@@ -91,7 +92,8 @@ set(FatFs_CONFIGDIR "${PROJECT_SOURCE_DIR}/src/cfg/")
 find_package(FatFs)
 
 ### ► br3ttb/PID library, ported away from Arduino
-add_subdirectory(vendor/PID)
+set(PID_ROOT "${PROJECT_SOURCE_DIR}/vendor/PID")
+find_package(PID)
 
 ### ► link FCU target against other libraries we need
 target_link_libraries(fcu Boost::vendored FatFs PID)
