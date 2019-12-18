@@ -4,7 +4,9 @@
 void MtiIMU::start() {
     printf("[mti]: starting spi... ");
     spiStart(&this->m_spi_driver, &this->m_spi_config);
-    printf("OK\n");
+    printf("ok\n");
+
+    palEnableLineEvent(this->m_line_DRDY, PAL_EVENT_MODE_RISING_EDGE);
 }
 
 }
