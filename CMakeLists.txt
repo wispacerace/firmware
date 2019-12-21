@@ -75,6 +75,10 @@ find_package(PID)
 ### ► Xbus de/serialization library
 add_subdirectory(vendor/xbus)
 
+### ► C++20-style std::span (tcb::span)
+set(TcbSpan_ROOT "${PROJECT_SOURCE_DIR}/vendor/span")
+find_package(TcbSpan)
+
 ### ► generate board target
 add_library(board-fcudev INTERFACE)
 file(MAKE_DIRECTORY "${PROJECT_BINARY_DIR}/boards/fcudev") # make sure to create the folder that we put the output header in
@@ -132,7 +136,7 @@ else()
         ChibiOS::RT ChibiOS::HAL ChibiOS::CPPWrappers ChibiOS::HAL::Streams)
 
     ### ► link FCU target against other libraries we need
-    target_link_libraries(fcu Boost::vendored FatFs PID)
+    target_link_libraries(fcu Boost::vendored FatFs PID Xbus tcb::span)
 
     ### ► enable link-time optimization on the Flight Control Unit target
     if(is_ipo_supported)
