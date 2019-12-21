@@ -54,6 +54,7 @@ int main() {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wmissing-noreturn"
     while (true) {
+        fflush(stdout);
         // reset the watchdog timer (let the chip know we're alive) every turn
         // of the main thread's loop
         wdgReset(&WDGD1);
