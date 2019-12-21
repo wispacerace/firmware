@@ -20,52 +20,14 @@
 #include "xbusutility.h"
 
 /*!
- * \brief Calculate the number of bytes needed for \a message payload.
- */
-static uint16_t messageLength(struct XbusMessage const* message)
-{
-	switch (message->mid)
-	{
-		case XMID_SetOutputConfig:
-			return message->length * 2 * sizeof(uint16_t);
-
-		default:
-			return message->length;
-	}
-}
-
-/*!
- * \brief Format a message with a pointer to an array of OutputConfiguration elements.
- */
-static void formatOutputConfig(uint8_t* raw, struct XbusMessage const* message)
-{
-	struct OutputConfiguration* conf = message->data;
-	for (int i = 0; i < message->length; ++i)
-	{
-		raw = XbusUtility_writeU16(raw, conf->dtype);
-		raw = XbusUtility_writeU16(raw, conf->freq);
-		++conf;
-	}
-}
-
-/*!
  * \brief Format the payload of a message from a native data type to
  * raw bytes.
  */
 static void formatPayload(uint8_t* raw, struct XbusMessage const* message)
 {
-	switch (message->mid)
+	for (int i = 0; i < message->length; ++i)
 	{
-		case XMID_SetOutputConfig:
-			formatOutputConfig(raw, message);
-			break;
-
-		default:
-			for (int i = 0; i < message->length; ++i)
-			{
-				*raw++ = ((uint8_t*)message->data)[i];
-			}
-			break;
+		*raw++ = ((uint8_t*)message->data)[i];
 	}
 }
 
@@ -107,7 +69,7 @@ size_t XbusMessage_format(uint8_t* raw, struct XbusMessage const* message, enum 
 	*dptr = message->mid;
 	checksum -= *dptr++;
 
-	uint16_t length = messageLength(message);
+	uint16_t length = message->length;
 
 	if (length < XBUS_EXTENDED_LENGTH)
 	{

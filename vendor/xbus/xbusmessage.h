@@ -95,6 +95,7 @@ struct XbusMessage
 /*!
  * \brief Output configuration structure.
  */
+#define XBUS_FREQ_OUTPUT_EVERY_MESSAGE 65535
 struct OutputConfiguration
 {
 	/*! \brief Data type of the output. */
