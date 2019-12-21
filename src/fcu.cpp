@@ -33,7 +33,10 @@ static SPIConfig spicfg_imu = {
 };
 
 static SDThread thd_sd;
-static IMUThread thd_imu(MtiIMU(SPID3, spicfg_imu));
+static MtiIMU imu(SPID3, spicfg_imu, LINE_MTI_DRDY, LINE_MTI_RST);
+static IMUSyncPipe imu_sync;
+static IMUThread thd_imu(imu, &imu_sync);
+static IMUAuxThread thd_imu_auxiliary(&imu, &imu_sync);
 
 int main() {
     halInit();
@@ -48,8 +51,9 @@ int main() {
     // which helps us recover from crashes where our code stops executing.
     wdgStart(&WDGD1, &wdg_config);
 
-    thd_sd.start(NORMALPRIO - 10);
-    thd_imu.start(NORMALPRIO+10);
+    // thd_sd.start(NORMALPRIO - 10);
+    thd_imu.start(NORMALPRIO-10);
+    thd_imu_auxiliary.start(NORMALPRIO-10);
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wmissing-noreturn"
