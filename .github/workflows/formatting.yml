@@ -1,0 +1,11 @@
+on: push
+name: format all code
+jobs:
+  lint:
+    name: clang-format c/c++ code
+    runs-on: ubuntu-latest
+    steps:
+    - name: Clang Code Formatter
+      uses: antoinealb/clang-format-action@clang9
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
