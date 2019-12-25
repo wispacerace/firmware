@@ -5,7 +5,9 @@ jobs:
     name: clang-format c/c++ code
     runs-on: ubuntu-latest
     steps:
-    - name: Clang Code Formatter
+    - name: Check out repo
+      uses: actions/checkout@v2
+    - name: Format code with clang-format
       uses: wispacerace/clang-format-action@master
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
