@@ -19,8 +19,8 @@
 /* (C)ChaN, 2014                                                          */
 /*------------------------------------------------------------------------*/
 
-#include "hal.h"
 #include "ff.h"
+#include "hal.h"
 
 #if FF_FS_REENTRANT
 /*------------------------------------------------------------------------*/
@@ -33,9 +33,9 @@ static semaphore_t ff_sem[FF_VOLUMES];
 /*------------------------------------------------------------------------*/
 int ff_cre_syncobj(BYTE vol, FF_SYNC_t *sobj) {
 
-  *sobj = &ff_sem[vol];
-  chSemObjectInit(*sobj, 1);
-  return TRUE;
+    *sobj = &ff_sem[vol];
+    chSemObjectInit(*sobj, 1);
+    return TRUE;
 }
 
 /*------------------------------------------------------------------------*/
@@ -43,8 +43,8 @@ int ff_cre_syncobj(BYTE vol, FF_SYNC_t *sobj) {
 /*------------------------------------------------------------------------*/
 int ff_del_syncobj(FF_SYNC_t sobj) {
 
-  chSemReset(sobj, 0);
-  return TRUE;
+    chSemReset(sobj, 0);
+    return TRUE;
 }
 
 /*------------------------------------------------------------------------*/
@@ -52,33 +52,24 @@ int ff_del_syncobj(FF_SYNC_t sobj) {
 /*------------------------------------------------------------------------*/
 int ff_req_grant(FF_SYNC_t sobj) {
 
-  msg_t msg = chSemWaitTimeout(sobj, (systime_t)FF_FS_TIMEOUT);
-  return msg == MSG_OK;
+    msg_t msg = chSemWaitTimeout(sobj, (systime_t)FF_FS_TIMEOUT);
+    return msg == MSG_OK;
 }
 
 /*------------------------------------------------------------------------*/
 /* Release Grant to Access the Volume                                     */
 /*------------------------------------------------------------------------*/
-void ff_rel_grant(FF_SYNC_t sobj) {
-
-  chSemSignal(sobj);
-}
+void ff_rel_grant(FF_SYNC_t sobj) { chSemSignal(sobj); }
 #endif /* FF_FS_REENTRANT */
 
-#if FF_USE_LFN == 3	/* LFN with a working buffer on the heap */
+#if FF_USE_LFN == 3 /* LFN with a working buffer on the heap */
 /*------------------------------------------------------------------------*/
 /* Allocate a memory block                                                */
 /*------------------------------------------------------------------------*/
-void *ff_memalloc(UINT size) {
-
-  return chHeapAlloc(NULL, size);
-}
+void *ff_memalloc(UINT size) { return chHeapAlloc(NULL, size); }
 
 /*------------------------------------------------------------------------*/
 /* Free a memory block                                                    */
 /*------------------------------------------------------------------------*/
-void ff_memfree(void *mblock) {
-
-  chHeapFree(mblock);
-}
+void ff_memfree(void *mblock) { chHeapFree(mblock); }
 #endif /* FF_USE_LFN == 3 */

@@ -1,0 +1,15 @@
+on: push
+name: format all code
+jobs:
+  lint:
+    name: clang-format c/c++ code
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out repo
+      uses: actions/checkout@v2
+    - name: Format code with clang-format
+      uses: wispacerace/clang-format-action@master
+      with:
+        exclude: 'vendor tools'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

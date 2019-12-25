@@ -1,5 +1,5 @@
-#include <cstdio>
 #include "filesystem.h"
+#include <cstdio>
 
 int FilesystemComponent::start_sdio() {
     // TODO: much nicer ways to handle errors
@@ -14,10 +14,10 @@ int FilesystemComponent::start_sdio() {
         printf("ok\n");
         printf("[fs/SDIO] Card Info\n");
         static const char *mode[] = {"SDV11", "SDV20", "MMC", NULL};
-        printf("[fs/SDIO] CSD     : %08X %8X %08X %08X \n",
-                    this->sdc.csd[3], this->sdc.csd[2], this->sdc.csd[1], this->sdc.csd[0]);
-        printf("[fs/SDIO] CID     : %08X %8X %08X %08X \n",
-                    this->sdc.cid[3], this->sdc.cid[2], this->sdc.cid[1], this->sdc.cid[0]);
+        printf("[fs/SDIO] CSD     : %08X %8X %08X %08X \n", this->sdc.csd[3],
+               this->sdc.csd[2], this->sdc.csd[1], this->sdc.csd[0]);
+        printf("[fs/SDIO] CID     : %08X %8X %08X %08X \n", this->sdc.cid[3],
+               this->sdc.cid[2], this->sdc.cid[1], this->sdc.cid[0]);
         printf("[fs/SDIO] Mode    : %s\n", mode[this->sdc.cardmode & 3U]);
         printf("[fs/SDIO] Capacity: %DMB\n", this->sdc.capacity / 2048);
 
@@ -47,7 +47,8 @@ int FilesystemComponent::start() {
             .n_root = 0,  // doesn't matter since this is exFAT
             .au_size = 0, // let decide based on size
         };
-        fs_err = f_mkfs("/", &params, NULL /* heap-alloc buffer (LFN==3) */, /* buffer size */ 512);
+        fs_err = f_mkfs("/", &params, NULL /* heap-alloc buffer (LFN==3) */,
+                        /* buffer size */ 512);
         if (fs_err != FR_OK) {
             printf("error: %i\n", fs_err);
             return fs_err;

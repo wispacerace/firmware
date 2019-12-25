@@ -1,5 +1,5 @@
-#include <utility>
 #include <cstdio>
+#include <utility>
 
 #include "ch.hpp"
 #include "hal.h"
@@ -8,8 +8,6 @@
 #include "threads/sd.h"
 
 using namespace chibios_rt;
-
-
 
 // The watchdog timer runs off of LSI (≈32khz, the low speed clock used for
 // auxiliary functions) so
@@ -38,7 +36,7 @@ int main() {
     // which helps us recover from crashes where our code stops executing.
     wdgStart(&WDGD1, &wdg_config);
 
-    thd_sd.start(NORMALPRIO-10);
+    thd_sd.start(NORMALPRIO - 10);
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wmissing-noreturn"

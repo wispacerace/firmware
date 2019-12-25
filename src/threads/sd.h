@@ -6,11 +6,12 @@
 using namespace chibios_rt;
 
 class SDThread : public BaseStaticThread<4096> {
-public:
+  public:
     SDThread() {}
-protected:
+
+  protected:
     void main() override;
 
-private:
+  private:
     FilesystemComponent m_fs;
 };
