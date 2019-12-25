@@ -1,18 +1,18 @@
 #pragma once
-#include <ch.h>
-#include <hal.h>
-#include <ff.h> // FatFS, via elm-chan (an industry standard FAT driver)
 #include "ffconf.h"
+#include <ch.h>
+#include <ff.h> // FatFS, via elm-chan (an industry standard FAT driver)
+#include <hal.h>
 
 #define SD_BLOCK_SIZE_HC 512
 
 class FilesystemComponent {
-public:
+  public:
     FilesystemComponent() : sdc(FATFS_HAL_DEVICE) {}
 
     int start();
 
-private:
+  private:
     int start_sdio();
 
     SDCDriver &sdc;
