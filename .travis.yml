@@ -1,5 +1,7 @@
 dist: bionic
 language: cpp
+git:
+  depth: false # clone the whole SCM history for sonarqubes' benefit when computing blame data
 addons:
   sonarcloud:
     organization: "wispacerace"
@@ -20,6 +22,7 @@ script:
 
   - mkdir -p build; cd build; cmake -DTOOLCHAIN_PATH=~/gcc-arm-none-eabi-8-2019-q3-update ..; cd ..
   - build-wrapper-linux-x86-64 --out-dir bw-output make -C build
+  
   - sonar-scanner
 
 cache:
