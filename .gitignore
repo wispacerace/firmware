@@ -177,6 +177,7 @@ fabric.properties
 # ---- SonarQube
 .sonar/
 .scannerwork/
+bw-output/
 
 ### macOS ###
 # General
