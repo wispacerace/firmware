@@ -13,6 +13,11 @@ install:
   - export PATH=~/.local/bin:$PATH
 
 script:
+  # attempt to hack around glib bug that makes sonar unhappy
+  - INTERCEPTOR_LIB=`find ${TRAVIS_HOME} -name libinterceptor-x86_64.so`
+  - INTERCEPTOR_LINK=`sed "s/x86_64/haswell/g"<<<"$INTERCEPTOR_LIB"`
+  - ln -s $INTERCEPTOR_LIB $INTERCEPTOR_LINK
+
   - mkdir -p build; cd build; cmake -DTOOLCHAIN_PATH=~/gcc-arm-none-eabi-8-2019-q3-update ..; cd ..
   - build-wrapper-linux-x86-64 --out-dir bw-output make -C build
   - sonar-scanner
