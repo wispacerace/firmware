@@ -37,6 +37,7 @@ static MtiIMU imu(SPID3, spicfg_imu, LINE_MTI_DRDY, LINE_MTI_RST);
 static IMUSyncPipe imu_sync;
 static IMUThread thd_imu(imu, &imu_sync);
 static IMUAuxThread thd_imu_auxiliary(&imu, &imu_sync);
+static RollControlThread thd_rollcntrl(&thd_imu.event_source, &thd_imu.data);
 
 int main() {
     halInit();
@@ -52,8 +53,9 @@ int main() {
     wdgStart(&WDGD1, &wdg_config);
 
     // thd_sd.start(NORMALPRIO - 10);
-    thd_imu.start(NORMALPRIO-10);
-    thd_imu_auxiliary.start(NORMALPRIO-10);
+    thd_imu_auxiliary.start(NORMALPRIO-5);
+    thd_imu.start(NORMALPRIO-2);
+    thd_rollcntrl.start(NORMALPRIO-10);
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wmissing-noreturn"

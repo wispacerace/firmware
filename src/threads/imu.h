@@ -8,6 +8,18 @@
 
 using namespace chibios_rt;
 
+struct IMUMessage {
+	uint16_t id;
+	uint32_t timestamp;
+	uint32_t status;
+
+	float angular_velocity[3]; // TODO: replace with vector
+};
+
+struct IMUData {
+    IMUMessage raw;
+    float angular_velocity[3];
+};
 
 // TODO: awful, replace/abstract better
 class IMUAuxThread : public BaseStaticThread<2000> {
@@ -23,9 +35,14 @@ private:
     IMUSyncPipe *m_sync;
 };
 
-class IMUThread : public BaseStaticThread<2000> {
+class IMUThread : public BaseStaticThread<3000> {
 public:
-    IMUThread(MtiIMU imu, IMUSyncPipe *sync) : m_sync(sync), m_imu(std::move(imu)) {}
+    IMUThread(MtiIMU imu, IMUSyncPipe *sync) : m_sync(sync), m_imu(std::move(imu)) {
+        chEvtObjectInit(&this->event_source);
+    }
+
+    IMUData data;
+    event_source_t event_source;
 protected:
     void main() override;
 
@@ -33,4 +50,5 @@ private:
     MtiIMU m_imu;
 
     IMUSyncPipe *m_sync;
+
 };
