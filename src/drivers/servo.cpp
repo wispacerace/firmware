@@ -12,7 +12,6 @@ Servo::Servo(PWMDriver *drv, pwmchannel_t chnl) {
     this->channel = chnl;
     this->drv = drv;
     this->angle = 90;
-    pwmEnableChannel(this->drv, chnl, degreesToTicks(this->drv, 90));
 }
 
 void Servo::write(int angle) {
