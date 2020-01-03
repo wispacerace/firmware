@@ -1,6 +1,5 @@
-SET(CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR} ${CMAKE_MODULE_PATH})
-
 ### ► include common gcc stm32 toolchain file
+set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR} ${CMAKE_MODULE_PATH})
 include(gcc_stm32)
 
 ### ► common flags for C and C++ compilers and the assembler
