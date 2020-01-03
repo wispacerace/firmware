@@ -21,7 +21,9 @@ script:
   - ln -s $INTERCEPTOR_LIB $INTERCEPTOR_LINK || true
 
   - mkdir -p build; cd build; cmake -DTOOLCHAIN_PATH=~/gcc-arm-none-eabi-8-2019-q3-update ..; cd ..
+  - mkdir -p build-testing; cd build-testing; cmake -DTESTS=ON ..; cd ..
   - build-wrapper-linux-x86-64 --out-dir bw-output make -C build
+  - make -C build-testing test-fcu
   
   - sonar-scanner
 
