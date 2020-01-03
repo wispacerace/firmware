@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstring>
+#include <cstdint>
 
 enum class XbusParserState {
     Preamble,
