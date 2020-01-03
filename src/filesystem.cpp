@@ -1,6 +1,6 @@
 #include "filesystem.h"
-#include <cstdio>
 #include <cinttypes>
+#include <cstdio>
 
 int FilesystemComponent::start_sdio() {
     // TODO: much nicer ways to handle errors
@@ -15,12 +15,17 @@ int FilesystemComponent::start_sdio() {
         printf("ok\n");
         printf("[fs/SDIO] Card Info\n");
         static const char *mode[] = {"SDV11", "SDV20", "MMC", NULL};
-        printf("[fs/SDIO] CSD     : %08" PRIx32 " %8" PRIx32 " %08" PRIx32 " %08" PRIx32 " \n", this->sdc.csd[3],
-               this->sdc.csd[2], this->sdc.csd[1], this->sdc.csd[0]);
-        printf("[fs/SDIO] CID     : %08" PRIx32 " %8" PRIx32 " %08" PRIx32 " %08" PRIx32 " \n", this->sdc.cid[3],
-               this->sdc.cid[2], this->sdc.cid[1], this->sdc.cid[0]);
+        printf("[fs/SDIO] CSD     : %08" PRIx32 " %8" PRIx32 " %08" PRIx32
+               " %08" PRIx32 " \n",
+               this->sdc.csd[3], this->sdc.csd[2], this->sdc.csd[1],
+               this->sdc.csd[0]);
+        printf("[fs/SDIO] CID     : %08" PRIx32 " %8" PRIx32 " %08" PRIx32
+               " %08" PRIx32 " \n",
+               this->sdc.cid[3], this->sdc.cid[2], this->sdc.cid[1],
+               this->sdc.cid[0]);
         printf("[fs/SDIO] Mode    : %s\n", mode[this->sdc.cardmode & 3U]);
-        printf("[fs/SDIO] Capacity: %" PRIu32 "MB\n", this->sdc.capacity / 2048);
+        printf("[fs/SDIO] Capacity: %" PRIu32 "MB\n",
+               this->sdc.capacity / 2048);
 
         return 0;
     }
