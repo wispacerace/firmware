@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.12) # ensure we're running on a modern CMake.
 cmake_policy(SET CMP0079 NEW)
 option(TESTS OFF)
 
-SET(CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake/ ${CMAKE_MODULE_PATH})
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 if(NOT TESTS)
     ### ► set the project to build using the ARM gcc cross-compilation toolchain with Cortex-M4 specific options
