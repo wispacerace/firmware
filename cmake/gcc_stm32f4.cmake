@@ -1,5 +1,3 @@
-SET(CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR} ${CMAKE_MODULE_PATH})
-
 ### ► include common gcc stm32 toolchain file
 include(gcc_stm32)
 
