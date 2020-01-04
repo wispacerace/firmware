@@ -7,8 +7,8 @@
 
 #include "drivers/mti.h"
 #include "filesystem.h"
-#include "threads/sd.h"
 #include "threads/imu.h"
+#include "threads/sd.h"
 
 using namespace chibios_rt;
 
@@ -28,7 +28,8 @@ static SPIConfig spicfg_imu = {
     .circular = false,
     .end_cb = NULL,
     .ssline = LINE_SPI3_CS,
-    .cr1 = SPI_CR1_BR_0 | SPI_CR1_BR_1 | SPI_CR1_BR_2 | SPI_CR1_CPOL | SPI_CR1_CPHA,
+    .cr1 = SPI_CR1_BR_0 | SPI_CR1_BR_1 | SPI_CR1_BR_2 | SPI_CR1_CPOL |
+           SPI_CR1_CPHA,
     .cr2 = 0,
 };
 
@@ -52,8 +53,8 @@ int main() {
     wdgStart(&WDGD1, &wdg_config);
 
     // thd_sd.start(NORMALPRIO - 10);
-    thd_imu.start(NORMALPRIO-10);
-    thd_imu_auxiliary.start(NORMALPRIO-10);
+    thd_imu.start(NORMALPRIO - 10);
+    thd_imu_auxiliary.start(NORMALPRIO - 10);
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wmissing-noreturn"

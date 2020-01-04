@@ -1,6 +1,6 @@
 #pragma once
-#include <utility>
 #include <cstdio>
+#include <utility>
 
 #include <ch.hpp>
 
@@ -8,28 +8,29 @@
 
 using namespace chibios_rt;
 
-
 // TODO: awful, replace/abstract better
 class IMUAuxThread : public BaseStaticThread<2000> {
-public:
+  public:
     IMUAuxThread(MtiIMU *imu, IMUSyncPipe *sync) : m_imu(imu), m_sync(sync) {}
 
-protected:
+  protected:
     void main() override;
 
-private:
+  private:
     MtiIMU *m_imu;
 
     IMUSyncPipe *m_sync;
 };
 
 class IMUThread : public BaseStaticThread<2000> {
-public:
-    IMUThread(MtiIMU imu, IMUSyncPipe *sync) : m_sync(sync), m_imu(std::move(imu)) {}
-protected:
+  public:
+    IMUThread(MtiIMU imu, IMUSyncPipe *sync)
+        : m_sync(sync), m_imu(std::move(imu)) {}
+
+  protected:
     void main() override;
 
-private:
+  private:
     MtiIMU m_imu;
 
     IMUSyncPipe *m_sync;
