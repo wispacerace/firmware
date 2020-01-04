@@ -5,6 +5,9 @@
 #include "hal.h"
 #include "sys/fault/handlers.h"
 
+#include "drivers/mti.h"
+#include "filesystem.h"
+#include "threads/imu.h"
 #include "threads/sd.h"
 
 using namespace chibios_rt;
@@ -21,7 +24,20 @@ static WDGConfig wdg_config = {
     .rlr = STM32_IWDG_RL(1000),
 };
 
+static SPIConfig spicfg_imu = {
+    .circular = false,
+    .end_cb = NULL,
+    .ssline = LINE_SPI3_CS,
+    .cr1 = SPI_CR1_BR_0 | SPI_CR1_BR_1 | SPI_CR1_BR_2 | SPI_CR1_CPOL |
+           SPI_CR1_CPHA,
+    .cr2 = 0,
+};
+
 static SDThread thd_sd;
+static MtiIMU imu(SPID3, spicfg_imu, LINE_MTI_DRDY, LINE_MTI_RST);
+static IMUSyncPipe imu_sync;
+static IMUThread thd_imu(imu, &imu_sync);
+static IMUAuxThread thd_imu_auxiliary(&imu, &imu_sync);
 
 int main() {
     halInit();
@@ -36,11 +52,14 @@ int main() {
     // which helps us recover from crashes where our code stops executing.
     wdgStart(&WDGD1, &wdg_config);
 
-    thd_sd.start(NORMALPRIO - 10);
+    // thd_sd.start(NORMALPRIO - 10);
+    thd_imu.start(NORMALPRIO - 10);
+    thd_imu_auxiliary.start(NORMALPRIO - 10);
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wmissing-noreturn"
     while (true) {
+        fflush(stdout);
         // reset the watchdog timer (let the chip know we're alive) every turn
         // of the main thread's loop
         wdgReset(&WDGD1);
