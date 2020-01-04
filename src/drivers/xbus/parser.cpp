@@ -1,6 +1,7 @@
 #include "parser.h"
 #include "xbusdef.h"
 #include "xbusmessage.h"
+#include <cstdint>
 #include <cstdio>
 
 size_t /* TODO: use optional */ xbus_buf2msg(XbusParsedMessage *msg,
