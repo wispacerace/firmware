@@ -54,17 +54,10 @@ int main() {
     // which helps us recover from crashes where our code stops executing.
     wdgStart(&WDGD1, &wdg_config);
 
-<<<<<<< HEAD
-    // thd_sd.start(NORMALPRIO - 10);
-    thd_imu_auxiliary.start(NORMALPRIO-5);
-    thd_imu.start(NORMALPRIO-2);
-    thd_rollcntrl.start(NORMALPRIO-10);
-=======
     // thd_sd.start(NORMALPRIO-10);
     thd_imu_auxiliary.start(NORMALPRIO - 5);
     thd_imu.start(NORMALPRIO - 2);
     thd_rollcntrl.start(NORMALPRIO - 10);
->>>>>>> apply clang-format
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wmissing-noreturn"
