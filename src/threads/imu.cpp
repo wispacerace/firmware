@@ -1,8 +1,8 @@
 #include "imu.h"
 #include "ch.h"
 #include "hal.h"
-#include <xsdeviceid.h>
 #include <cinttypes>
+#include <xsdeviceid.h>
 
 void IMUThread::main() {
     setName("imu");
