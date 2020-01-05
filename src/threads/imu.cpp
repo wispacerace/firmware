@@ -2,6 +2,7 @@
 #include "ch.h"
 #include "hal.h"
 #include <xsdeviceid.h>
+#include <cinttypes>
 
 void IMUThread::main() {
     setName("imu");
@@ -9,7 +10,7 @@ void IMUThread::main() {
     m_imu.start();
     m_imu.wakeup(m_sync);
     auto dev_id = m_imu.read_device_id(m_sync);
-    printf("[imu] found device with ID %08x\n", dev_id);
+    printf("[imu] found device with ID %08" PRIx32 "\n", dev_id);
     auto subtype = XsDeviceId_getFunction(dev_id);
     printf("[imu] device is an MTi-%u %s\n", subtype,
            XsDeviceId_functionDescription(subtype));
