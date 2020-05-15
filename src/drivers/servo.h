@@ -3,9 +3,10 @@
 
 class Servo {
   public:
-    Servo(PWMDriver *drv, pwmchannel_t chnl);
+    Servo(PWMDriver *drv, pwmchannel_t chnl)
+        : channel(chnl), drv(drv), angle(90) {}
     int read();
-    void write(int angle);
+    void write(int new_angle);
 
   private:
     int angle;
